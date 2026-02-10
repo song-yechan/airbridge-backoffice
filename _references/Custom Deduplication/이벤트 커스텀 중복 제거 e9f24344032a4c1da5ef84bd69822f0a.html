@@ -1,0 +1,720 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>이벤트 커스텀 중복 제거</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="e9f24344-032a-4c1d-a5ef-84bd69822f0a" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">🥳</span></div><h1 class="page-title" dir="auto">이벤트 커스텀 중복 제거</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>생성자</th><td><span class="user"><img src="%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%BB%A4%EC%8A%A4%ED%85%80%20%EC%A4%91%EB%B3%B5%20%EC%A0%9C%EA%B1%B0/%25EC%259E%25AC%25EC%259B%2590.png" class="icon user-icon"/>Jaewon Kim</span></td></tr><tr class="property-row property-row-last_edited_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>최종 편집 일시</th><td><time>@2025년 10월 22일 오후 4:40</time></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="auto"><div><div style="display:contents" dir="ltr"><figure class="block-color-yellow_background callout" style="white-space:pre-wrap;display:flex" id="5bf11f6d-8520-41d0-9c03-6ddfdabf70e5"><div style="font-size:1.5em"><span class="icon">❓</span></div><div style="width:100%">사용 중 문제가 있으신가요?<br/><span style="border-bottom:0.05em solid">#all-backend</span>에 <strong>!worker-support</strong> 를 태그해서 질문해주세요!</div></figure></div><div style="display:contents" dir="auto"><h2 id="af2baacc-8cbc-4115-8b58-cbcc3c3f0b3a" class="">📄 Description</h2></div><div style="display:contents" dir="auto"><hr id="fcba20c1-c76e-4af2-87bd-4ed5519c9aae"/></div><div style="display:contents" dir="auto"><ul id="740b0567-8c55-4a83-a436-ee4d3482bd0f" class="toggle"><li><details open=""><summary>중복으로 이벤트를 보냈을 때, <code>Unique Key</code>(또는 key의 조합)를 통해 <strong>최대 </strong><code><strong>24시간</strong></code><strong> 안</strong>의 이벤트를 중복 제거 해주는 기능입니다.</summary><div style="display:contents" dir="ltr"><figure id="295f345d-34fd-4574-bf25-1dc20d897a05" class="image"><a href="%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%BB%A4%EC%8A%A4%ED%85%80%20%EC%A4%91%EB%B3%B5%20%EC%A0%9C%EA%B1%B0/Untitled.png"><img style="width:679px" src="%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%BB%A4%EC%8A%A4%ED%85%80%20%EC%A4%91%EB%B3%B5%20%EC%A0%9C%EA%B1%B0/Untitled.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="f135f770-3636-4562-8fee-6be54a7bea8f"><div class="source">https://teamab180.slack.com/archives/C9B1D5N7N/p1596521413103600</div></figure></div></details></li></ul></div><div style="display:contents" dir="auto"><h3 id="98004fe1-6f36-429f-ac10-3088cb64bb00" class="">백오피스에서 지원하지 않는 커스텀 이벤트에 대한 적용은 #csm-x-backend-req 에서 따로 요청해주세요.</h3></div><div style="display:contents" dir="auto"><ul id="b032733f-24f4-4d3c-8343-2b2a7fc3bdb4" class="bulleted-list"><li style="list-style-type:disc"><em>Install, Deeplink Open 등 Target Event를 대상으로 한 중복 제거는 권장하지 않습니다.</em></li></ul></div><div style="display:contents" dir="auto"><p id="a416f9b0-c9ea-4baf-8c73-cf7fe58bf488" class="">
+</p></div><div style="display:contents" dir="auto"><h2 id="cf701da1-bd94-4a63-822b-6df6e4d28592" class="">🤗 For All</h2></div><div style="display:contents" dir="auto"><hr id="15f2c8b6-149b-49d5-a8bf-426969231855"/></div><div style="display:contents" dir="auto"><div style="display:contents" dir="auto"><div><div style="display:contents" dir="auto"><ul id="3c1b4168-325c-44bd-b8cc-d1204ca91da0" class="bulleted-list"><li style="list-style-type:disc">“Airbridge 대시보드 &gt; 앱 선택 &gt; Internal &gt; Worker Backoffice 탭”으로 이동해서 사용하세요<div style="display:contents" dir="auto"><ul id="cb6b9986-a0a6-4d67-87d7-fb778674b305" class="bulleted-list"><li style="list-style-type:circle">VPN 또는 사무실 IP로만 접근 가능합니다</li></ul></div><div style="display:contents" dir="auto"><ul id="0ff3ed9d-554f-4232-a213-37f9f4e054eb" class="bulleted-list"><li style="list-style-type:circle">기본 가이드: <a href="https://www.notion.so/How-to-use-the-Worker-Backoffice-51aec70a87b7476f9f4a71d383760616?pvs=21"><img class="icon" src="data:image/png;base64,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"/>워커 백오피스 사용 가이드 | How to use the Worker Backoffice</a> </li></ul></div></li></ul></div></div></div></div><div style="display:contents" dir="auto"><ul id="c9109c14-48f5-4d1a-8ef9-d5675085004d" class="toggle"><li><details open=""><summary><strong>고객사 안내용 (구매 완료 이벤트 기준)</strong></summary><div style="display:contents" dir="auto"><ul id="b92e88a1-a39b-4857-9e8f-6e285dd660fa" class="bulleted-list"><li style="list-style-type:disc">최대 24시간 이내, 동일한 (transaction_id)를 가진 구매완료 이벤트의 경우, 중복 제거됩니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="4724c897-0a0b-42b8-90af-c2c9ee0e76b4" class="bulleted-list"><li style="list-style-type:disc">현재 {고객사명} 이벤트 로그 살펴보았을 때, transaction_id는 정상적으로 수집되고 있는 것으로 보여지나, 특정 이유로 transaction id가 없는 구매완료 이벤트의 경우에는 제외 처리 되지 않습니다.<div style="display:contents" dir="auto"><p id="fb9853ce-3cf0-4f6c-b5df-fb2becfe1670" class="">(사전에 고객사 이벤트 로그 —  transaction_id 정상 수집 여부 확인)</p></div></li></ul></div><div style="display:contents" dir="auto"><ul id="2e8c9394-e71f-44ac-b824-31632cc99770" class="bulleted-list"><li style="list-style-type:disc">구매 완료 이벤트 외에 주요 지표로 확인하고 계신 이벤트도 중복 제거 처리 희망하시는 경우,<div style="display:contents" dir="auto"><p id="4599ea23-d64c-4a0a-9c3e-377b4d1e9094" class="">해당 이벤트 리스트 전달 부탁드립니다. </p></div></li></ul></div><div style="display:contents" dir="auto"><ul id="eeeb7e13-a91e-44b2-87b9-90732409b3fd" class="bulleted-list"><li style="list-style-type:disc">이벤트 리스트 전달 시, transaction_id와 같이 이벤트와 함께 전송하시는 값 중, unique하다고 판단되는 값이 있다면 함께 전달 부탁드립니다. 해당 값을 기준으로 중복 처리 가능할지 빠르게 검토 도와드리겠습니다.</li></ul></div></details></li></ul></div><div style="display:contents" dir="auto"><p id="fbdac299-6da9-407d-84d1-a09f11e25e72" class="">
+</p></div><div style="display:contents" dir="auto"><h2 id="2d03545a-cfe2-479e-a1ce-c968a9525df7" class="">👏 For Developers - 커스텀으로 지원할 때</h2></div><div style="display:contents" dir="auto"><hr id="480e5307-0d1e-4f9c-a2fa-d4ece63ebff5"/></div><div style="display:contents" dir="auto"><ul id="07434acf-2a85-4f13-8409-50db115341b5" class="toggle"><li><details open=""><summary>Dedup Key는 Postback과 동일하게 Liquid 문법을 사용합니다.</summary><div style="display:contents" dir="auto"><ul id="317e885a-be01-4d25-815b-907d89c36d59" class="bulleted-list"><li style="list-style-type:disc">사용할 수 있는 custom function의 종류는 다음과 같습니다.<div style="display:contents" dir="auto"><ul id="88037c83-b7e3-4a4b-82ff-4759907ec78d" class="bulleted-list"><li style="list-style-type:circle">assert_not_empty: 값이 있음을 보장합니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="60e9bb9e-95d9-4d35-95e9-2bb9a1967b3d" class="bulleted-list"><li style="list-style-type:circle">assert_valid_uuid4: 값이 유효한 UUID4 포맷임을 보장합니다.</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="e11a753e-f063-496a-a58b-d3d88e675c57" class="bulleted-list"><li style="list-style-type:disc">위에서 사용한 custom function에서 보장하는 값이 아니라면, 해당 이벤트는 중복 제거 없이 처리 됩니다.<div style="display:contents" dir="auto"><ul id="597f1526-06b0-4c7c-8b6f-c0255fbf8f42" class="bulleted-list"><li style="list-style-type:circle">예: <code>{{ data.device.deviceUUID | assert_valid_uuid4 }}</code> 형식에서 deviceUUID가 valid한 UUID4 포맷이 아니라면 중복 제거를 하지 않고 이벤트를 처리합니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="10dd54cc-1d9e-4daa-b36d-06ebcebbf8b0" class="bulleted-list"><li style="list-style-type:circle">예: <code>{{ data.eventData.goal.semanticAttributes.transactionID | assert_not_empty }}</code> 형식에서 transactionID가 없다면 중복 제거를 하지 않고 이벤트를 처리합니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="720911fb-1fa4-4616-93f2-539aa84cef76" class="bulleted-list"><li style="list-style-type:circle">⚠️ [2022.08.22 추가] 식별자를 포함하지 않는다면 dedup key 앞에 <strong>{{ data.eventData.category }}$$</strong> 를 추가해주세요. <a href="https://teamab180.slack.com/archives/C9B1D5N7N/p1660818870681769">이벤트간 dedup key 를 공유하여 후속 이벤트가 버려지는 경우가 있었습니다.</a></li></ul></div></li></ul></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="7d7a8abe-f924-4c12-95da-73f013277694" class="toggle"><li><details open=""><summary><strong><span style="border-bottom:0.05em solid">Dedup Key 예시</span></strong></summary><div style="display:contents" dir="auto"><ul id="841c4bdd-6ce7-48c2-b382-470599202f26" class="bulleted-list"><li style="list-style-type:disc">예시 1: <strong><span style="border-bottom:0.05em solid">앱/웹을 구분하여</span></strong><strong> </strong>중복 제거 요청왔을 경우(예: 구매완료 이벤트 중 앱에서 발생하는 중복 이벤트만 제거해주세요)<div style="display:contents" dir="auto"><ul id="fb6610fc-1dbc-4ebd-a3d1-372ce52db261" class="bulleted-list"><li style="list-style-type:circle">→<strong> {{ data.eventData.category | assert_not_empty }}$$</strong>{{ data.eventData.goal.semanticAttributes.transactionID | assert_not_empty }}<div style="display:contents" dir="auto"><ul id="658b9c6a-e531-442d-b667-f7958f991df1" class="bulleted-list"><li style="list-style-type:square">DB INSERT 할 때 dedup key<div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28988d7b-0ea5-431d-940f-ab5f11ae07b8" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">9360$$airbridge.ecommerce.order.completed$${{ data.eventData.goal.semanticAttributes.transactionID | assert_not_empty }}</code></pre></div></li></ul></div><div style="display:contents" dir="auto"><ul id="6b9e61c4-5dab-48d5-88f8-52c788cd9150" class="bulleted-list"><li style="list-style-type:square">Liquid 렌더링된 dedup key 예시:<div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="302d282d-788d-4623-93a5-409bc248e6df" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">9360$$airbridge.ecommerce.order.completed$$1234567890</code></pre></div></li></ul></div></li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="ab5fb23f-5769-45c1-a073-bfece5151a9c" class="bulleted-list"><li style="list-style-type:disc">예시 2: <strong><span style="border-bottom:0.05em solid">앱/웹 관계 없이</span></strong><strong> </strong>중복 제거 요청이 왔을 경우(예: 구매완료 중복 이벤트를 제거해주세요)<div style="display:contents" dir="auto"><ul id="a62f44b5-04af-499c-af94-7b214a034397" class="bulleted-list"><li style="list-style-type:circle">→ <strong>{{ data.eventData.goal.category | assert_not_empty }}$$</strong>{{ data.eventData.goal.semanticAttributes.transactionID | assert_not_empty }}<div style="display:contents" dir="auto"><ul id="320f4cb9-a610-439a-b38f-50e6cf8348c8" class="bulleted-list"><li style="list-style-type:square">DB INSERT 할 때 dedup key<div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="7654ec9a-6b8f-4ae0-92b3-401e2130818f" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">airbridge.ecommerce.order.completed$${{ data.eventData.goal.semanticAttributes.transactionID | assert_not_empty }}</code></pre></div></li></ul></div><div style="display:contents" dir="auto"><ul id="214a5ec6-8d15-4ed8-91fb-217f1f8f8936" class="bulleted-list"><li style="list-style-type:square">Liquid 렌더링된 dedup key 예시:<div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="bab5e522-a765-42cf-b9ac-75e6ba4dd74d" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">airbridge.ecommerce.order.completed$$1234567890</code></pre></div></li></ul></div></li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="fa8adbf8-3293-4b87-b71f-4334d992a043" class="bulleted-list"><li style="list-style-type:disc">예시 3: <strong><span style="border-bottom:0.05em solid">특정 디바이스에서 앱/웹을 구분하여</span></strong> 중복 이벤트 제거 요청이 왔을 경우(예: 같은 디바이스에서 발생하는 인앱 구매완료 중복 이벤트를 제거해주세요)<div style="display:contents" dir="auto"><ul id="c4152c01-2f26-4316-99c5-589db9be9e78" class="bulleted-list"><li style="list-style-type:circle"><strong>변경: {{ data.eventData.category | assert_not_empty }}$$</strong>{{ data.device.deviceUUID | assert_valid_uuid4 }}$${{ data.eventData.goal.semanticAttributes.transactionID | assert_not_empty }}<div style="display:contents" dir="auto"><ul id="47f70f88-783b-41fd-8ad7-54d1a0fedc1d" class="bulleted-list"><li style="list-style-type:square">DB INSERT 할 때 dedup key<div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="b5902ec5-51e1-4e9f-8164-999752cb0d80" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">9360$$airbridge.ecommerce.order.completed$${{ data.device.deviceUUID | assert_valid_uuid4 }}$${{ data.eventData.goal.semanticAttributes.transactionID | assert_not_empty }}</code></pre></div></li></ul></div><div style="display:contents" dir="auto"><ul id="74ca8fb5-5c5b-45b2-9a22-a8df27a18ebc" class="bulleted-list"><li style="list-style-type:square">Liquid 렌더링된 dedup key 예시:<div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="545eed5e-1f70-46e1-ace4-97de0eed2130" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">9360$$airbridge.ecommerce.order.completed$$575956b4-b444-4708-af61-e47a5f7ed843$$1234567890</code></pre></div></li></ul></div></li></ul></div></li></ul></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="9a0e9400-5ba0-4650-9272-748f39f2b68f" class="toggle"><li><details open=""><summary>추가 방법</summary><div style="display:contents" dir="auto"><ol type="1" id="10f40d6f-53d9-445d-b320-9c4b3de8c0d1" class="numbered-list" start="1"><li>요청받은 설정이 유효한지 확인합니다.<div style="display:contents" dir="auto"><ol type="a" id="8e3acc43-1263-4cf4-b267-5b799a7bc3ed" class="numbered-list" start="1"><li>Liquid 문법이 문제 없는지 확인<div style="display:contents" dir="auto"><ul id="6abcb21e-28b1-45cf-bc23-faae920d2fd0" class="bulleted-list"><li style="list-style-type:disc">없는 함수를 사용하지는 않았는지</li></ul></div><div style="display:contents" dir="auto"><ul id="5c47b491-0a4f-40b1-832b-80709fad4ee6" class="bulleted-list"><li style="list-style-type:disc">오타는 없는지</li></ul></div><div style="display:contents" dir="auto"><ul id="98694148-dd03-4293-bf01-db2bc3feba22" class="bulleted-list"><li style="list-style-type:disc">고객사의 다른 event category 와 dedup key 를 공유하지는 않는지, 요청한 이벤트 외 다른 이벤트가 중복처리 될 여지는 없는지<div style="display:contents" dir="auto"><ul id="946861e7-c6a4-4a64-94f7-566f622e6b9d" class="bulleted-list"><li style="list-style-type:circle">참고: <a href="https://teamab180.slack.com/archives/C9B1D5N7N/p1660818870681769">드시모네 고객사 dedup key 공유로 인한 후속 이벤트 중복 제거 이슈</a></li></ul></div></li></ul></div></li></ol></div><div style="display:contents" dir="auto"><ol type="a" id="bd674065-97c2-4343-8d2a-88934eeefec4" class="numbered-list" start="2"><li>실제로 데이터가 잘 들어오고 있는지 확인<div style="display:contents" dir="auto"><ul id="a5170be6-c5fe-4037-ad51-f83f84b0b977" class="bulleted-list"><li style="list-style-type:disc">appID, event명, 컬럼 데이터(transactionID 등)가 실제로 있는지 Kibana나 Snowflake 쿼리를 통해 확인<div style="display:contents" dir="ltr"><figure id="aa8bb499-f649-4c72-9cf5-0210a5d26c32" class="image"><a href="%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%BB%A4%EC%8A%A4%ED%85%80%20%EC%A4%91%EB%B3%B5%20%EC%A0%9C%EA%B1%B0/Untitled%201.png"><img style="width:598px" src="%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%BB%A4%EC%8A%A4%ED%85%80%20%EC%A4%91%EB%B3%B5%20%EC%A0%9C%EA%B1%B0/Untitled%201.png"/></a></figure></div></li></ul></div><div style="display:contents" dir="auto"><ul id="d8193911-16d0-43c3-bc0e-42653023b427" class="bulleted-list"><li style="list-style-type:disc">실제로 들어오고 있지 않은 데이터라면 CSM 통해 다시 확인</li></ul></div><div style="display:contents" dir="auto"><ul id="ffa634f4-ffb5-44d7-a074-263d9cbbbfcb" class="bulleted-list"><li style="list-style-type:disc">만약 요청받은 eventCategory가 In Web 이벤트인 경우 <code>data.app.appID</code> 가 아닌 <code>data.website.appID</code> 로 검색해주세요<div style="display:contents" dir="auto"><ul id="9bcffb39-a646-46bf-ba08-d1905d8bf5a6" class="bulleted-list"><li style="list-style-type:circle">이유는 Web Event이기 때문에 app으로 요청하면 데이터가 나오지 않기 때문입니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="4240cf9b-e0fa-40f2-b0ca-13d3f89fbf46" class="bulleted-list"><li style="list-style-type:circle">관련 스레드: <a href="https://teamab180.slack.com/archives/CL3BB93HB/p1659513063542299?thread_ts=1659512762.550769&amp;cid=CL3BB93HB">https://teamab180.slack.com/archives/CL3BB93HB/p1659513063542299?thread_ts=1659512762.550769&amp;cid=CL3BB93HB</a></li></ul></div></li></ul></div></li></ol></div></li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="50fb2fd6-ecb7-46c2-9b12-b6c5493014e8" class="numbered-list" start="2"><li><code>tbl_app_event_dedup_settings</code> 테이블에 값을 적절히 채우면 됩니다<div style="display:contents" dir="ltr"><figure id="cb2ea860-b772-4f95-ba38-0adc57d1af94" class="image"><a href="%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%BB%A4%EC%8A%A4%ED%85%80%20%EC%A4%91%EB%B3%B5%20%EC%A0%9C%EA%B1%B0/Untitled%202.png"><img style="width:654px" src="%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%BB%A4%EC%8A%A4%ED%85%80%20%EC%A4%91%EB%B3%B5%20%EC%A0%9C%EA%B1%B0/Untitled%202.png"/></a></figure></div></li></ol></div></details></li></ul></div><div style="display:contents" dir="auto"><p id="75442092-3bf4-4c2c-b6c7-2735146232a2" class="">
+</p></div><div style="display:contents" dir="auto"><p id="e99a0d1c-7ff9-41f7-936f-fdbd42a35313" class="">
+</p></div><div style="display:contents" dir="auto"><hr id="ab3a41b6-1837-43ea-9c7c-e4eb045f20b8"/></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">📜 History</summary><div class="indented"><div style="display:contents" dir="auto"><ul id="6b9d434f-5b07-465d-9693-9c4ae49d5cf4" class="bulleted-list"><li style="list-style-type:disc">2021-08-05<div style="display:contents" dir="auto"><ul id="cdde6b36-9e3c-4b81-87e2-8ab2aa386a80" class="bulleted-list"><li style="list-style-type:circle">문제상황: skstoa에서 구매완료 이벤트가 중복으로 전송되는 이슈.</li></ul></div><div style="display:contents" dir="auto"><ul id="13424c2c-a994-4c50-b522-1dc211a1f917" class="bulleted-list"><li style="list-style-type:circle">해결: sdk 수정없어도 해결할 수 있도록 이벤트 중복제거 안내<div style="display:contents" dir="auto"><ul id="44d6b60c-3ad4-49ae-b697-a8686adedd84" class="bulleted-list"><li style="list-style-type:square">이벤트 중복제거란: 특정 키값을 기준으로 최대 24시간안에 이벤트를 중복제거</li></ul></div><div style="display:contents" dir="auto"><ul id="d43976e0-9960-4002-bcdf-d6e4f198c53b" class="bulleted-list"><li style="list-style-type:square">이벤트 발생 및 해당 이벤트의 키값들을 저장 -&gt; 24시간안에 동일한 키값으로 같은 이벤트가 전송되면 중복이벤트라고 간주. 모두 제거처리</li></ul></div><div style="display:contents" dir="auto"><ul id="5e1ccf09-b8ba-45bb-b370-26188bd51d38" class="bulleted-list"><li style="list-style-type:square">서버단에서 이벤트가 버려지는것이기 때문에 아예 raw_data 도 남지않게됨</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="e300dca8-2c8d-4bba-89d9-1a029c4e368b" class="bulleted-list"><li style="list-style-type:circle">키값 관련<div style="display:contents" dir="auto"><ul id="2bcb82a1-24ea-481f-be38-7a72a1860a10" class="bulleted-list"><li style="list-style-type:square">skstoa에서 처음 &lt;transaction id+device uuid&gt;로 키값을 요청주었음.그러나 웹의 경우device uuid가 없으며, device uuid 없이 이벤트가 들어오는경우 중복제거 되지 않는 이슈.</li></ul></div><div style="display:contents" dir="auto"><ul id="d2b1fc8e-8580-46c1-a5a9-3b8bf247974d" class="bulleted-list"><li style="list-style-type:square">skstoa는 웹앱 구분없이 구매완료 중복을 제거하고 싶은 상황이라, transaction id만을 기준으로 제거하기로 함.</li></ul></div></li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="0032df4f-3b1f-4ed4-8063-563b1d6c61e2" class="bulleted-list"><li style="list-style-type:disc">2022-08-18<div style="display:contents" dir="auto"><ul id="f28fe9a2-3f29-4401-8b24-214d4fb5c239" class="bulleted-list"><li style="list-style-type:circle"><a href="https://teamab180.slack.com/archives/C9B1D5N7N/p1660818870681769">문제상황: 드시모네에서 구매완료 후 구매 취소 이벤트가 중복 제거됨</a><div style="display:contents" dir="auto"><ul id="8e3cbc7b-2609-4889-b420-b337ce4396e0" class="bulleted-list"><li style="list-style-type:square">구매완료 이벤트를 A 라는 transactionID 로 진행하고 구매취소 이벤트를 같은 A로 요청, 후속 이벤트가 중복 제거됨</li></ul></div><div style="display:contents" dir="auto"><ul id="fa789068-f010-4b92-a785-41b089cc924d" class="bulleted-list"><li style="list-style-type:square">원인: 이전에 커스텀 중복제거 요청이 있었어서 dedup key 가 등록되어 있었고, 구매완료와 구매취소의 dedup key가 똑같이 설정되어 있었음<div style="display:contents" dir="auto"><ul id="177171d7-cef5-4284-8041-4ec485a25e16" class="bulleted-list"><li style="list-style-type:disc">{{ data.eventData.goal.semanticAttributes.transactionID | assert_not_empty }}</li></ul></div></li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="201cad3f-b94f-43fe-a57a-dc5b0c355ccb" class="bulleted-list"><li style="list-style-type:circle">해결: 구매취소 이벤트의 dedup key 에  <code><strong>{{ data.eventData.category }}$$</strong></code> 를 prefix 로 붙임</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><p id="d4e125db-679a-465d-8e41-1dc9206ebb8a" class="">
+</p></div></div></details></div><div style="display:contents" dir="ltr"><figure id="6711ac0b-83de-4798-9ead-77cc4e49a37f" class="link-to-page"><a href="https://www.notion.so/Archive-6711ac0b83de47989ead77cc4e49a37f?pvs=21">기존 가이드 Archive</a></figure></div><div style="display:contents" dir="auto"><p id="2e82d280-e271-4218-9aea-d0eddd72e7ce" class="">
+</p></div></div></div><div style="display:contents" dir="auto"><p id="2797b403-8bf1-48f3-9668-c1f7dd2ba305" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

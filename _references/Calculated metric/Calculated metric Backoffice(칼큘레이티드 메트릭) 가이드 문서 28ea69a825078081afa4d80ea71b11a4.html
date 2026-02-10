@@ -1,0 +1,1520 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Calculated metric Backoffice(칼큘레이티드 메트릭) 가이드 문서</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="28ea69a8-2507-8081-afa4-d80ea71b11a4" class="page sans"><header><h1 class="page-title" dir="auto">Calculated metric Backoffice(<strong>칼큘레이티드 메트릭)</strong> 가이드 문서</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>생성자</th><td><span class="user"><img src="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/%25E1%2584%2589%25E1%2585%25B3%25E1%2584%258F%25E1%2585%25B3%25E1%2584%2585%25E1%2585%25B5%25E1%2586%25AB%25E1%2584%2589%25E1%2585%25A3%25E1%2586%25BA_2025-12-16_%25E1%2584%258B%25E1%2585%25A9%25E1%2584%2592%25E1%2585%25AE_3.41.14.png" class="icon user-icon"/>jonghyun choo</span></td></tr><tr class="property-row property-row-last_edited_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>최종 편집 일시</th><td><time>@2026년 2월 2일 오전 10:27</time></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="ltr"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="28ea69a8-2507-8045-bdde-db40025d2b57"><div style="font-size:1.5em"><span class="icon">❓</span></div><div style="width:100%">사용 중 문제가 있으신가요?<br/><a href="https://teamab180.slack.com/archives/C9B1D5N7N"><span style="border-bottom:0.05em solid">#all-backend</span></a>에 <em><strong>@abr-backend-report</strong></em> 를 태그해서 질문해주세요!</div></figure></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-8083-903f-d1bdc3a6e18d" class="">App smith의 Calculated Metric 관리 페이지가 BackOffice로 이관되었습니다.</p></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-8002-8237-e27b17ecacbb" class="">해당 문서에서 수식과 관련된 내용은 동일하고 변경된 내용만 기재합니다.</p></div><div style="display:contents" dir="auto"><h1 id="28ea69a8-2507-80b7-96b3-ffb567fd4db7" class="">BackOffice 페이지 접속</h1></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-80de-9474-ff9dd5c0dda0" class="">BackOffice Url  : <a href="https://app.airbridge.io/app/ablog/internals/office/cs">https://app.airbridge.io/app/ablog/internals/office/cs</a></p></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-805f-bdcd-dc86ed155741" class="">대시보드 이동후 좌측 메뉴에서 <code>Internal → CS Backoffice → Calculated metric in Actuals Report..</code> 페이지로 이동합니다.</p></div><div style="display:contents" dir="ltr"><figure id="28ea69a8-2507-8032-8b2b-c8f9d4e7a081" class="image"><a href="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/image.png"><img style="width:482.96875px" src="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/image.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-80b1-8f38-d28698730860" class="">
+</p></div><div style="display:contents" dir="auto"><h1 id="28ea69a8-2507-8026-a797-c583168706f8" class="">Calculated metric 만들기</h1></div><div style="display:contents" dir="ltr"><figure id="28ea69a8-2507-8033-b6a5-da25c721fd94" class="image"><a href="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/image%201.png"><img style="width:709.984375px" src="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/image%201.png"/></a></figure></div><div style="display:contents" dir="auto"><h2 id="28ea69a8-2507-8049-a174-c23b097b6921" class="">필드값 채우기</h2></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-805c-9e18-c29236fb99ae" class="bulleted-list"><li style="list-style-type:disc">Organization ID : Calculated metric을 만들고 싶은 조직의 ID를 입력합니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8038-9fcb-d9571a8d25c8" class="bulleted-list"><li style="list-style-type:disc">Key: 한 조직 내에서 Calculated metric을 유일하게 구분할 값을 입력합니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8008-86ec-c0052d29856f" class="bulleted-list"><li style="list-style-type:disc">Display Name : Actuals/Trends 리포트에서 메트릭 선택시 보여주고 싶은 메트릭의 이름을 입력합니다.<div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8075-a22f-c033b6fca861" class="toggle"><li><details open=""><summary>여기에 입력한 이름대로 리포트에서 메트릭이 표시됩니다.</summary><div style="display:contents" dir="ltr"><figure id="28ea69a8-2507-80f4-ad9f-fe0ca94871c3" class="image"><a href="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/Screen_Shot_2022-11-09_at_2.31.45_PM.png"><img style="width:816px" src="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/Screen_Shot_2022-11-09_at_2.31.45_PM.png"/></a></figure></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-804c-bdb7-d7b1855601fd" class="bulleted-list"><li style="list-style-type:circle">Calculated metric의 툴팁 설명은 수식대로 표시가 됩니다. </li></ul></div><div style="display:contents" dir="auto"><p id="2a9a69a8-2507-80cc-b4f1-ea00d53a95da" class="">
+</p></div></li></ul></div><div style="display:contents" dir="auto"><h2 id="2a9a69a8-2507-802d-8db8-e777af7e2967" class="">메트릭 Key 값 제약조건</h2></div><div style="display:contents" dir="auto"><ul id="2a9a69a8-2507-80ae-8975-feed2d41f315" class="bulleted-list"><li style="list-style-type:disc"><code><strong>영어 소문자, 언더스코어(_)</strong></code> 만 가능하며 이외의 문자 ex) 영어 대문자, 하이픈(-), 공백(스페이스) 등의 문자를 포함하여 키를 생성하면 메트릭이 생성되지 않습니다.</li></ul></div><div style="display:contents" dir="auto"><p id="2a9a69a8-2507-8044-862b-d6217baea8c2" class="">
+</p></div><div style="display:contents" dir="auto"><h2 id="28ea69a8-2507-800e-bd09-dd47dae24443" class="">수식 만들기</h2></div><div style="display:contents" dir="auto"><h3 id="28ea69a8-2507-80a1-9274-c437b443effe" class="">Schema 설명</h3></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8008-8a4e-f224768917f1" class="bulleted-list"><li style="list-style-type:disc">json 형식으로 작성해야 합니다. (human-readable 하게 만드는 건 공수가 너무 많이 들어서….. 조금만 보면 json으로 누구나 할 수 있어요…)</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-801e-bb29-f7e9c61747e8" class="bulleted-list"><li style="list-style-type:disc">메트릭, 사칙연산(<code>+</code> <code>-</code> <code>*</code> <code>/</code>), 실수를 이용할 수 있습니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8068-aae6-e1adc82f7b05" class="bulleted-list"><li style="list-style-type:disc">arithmetic을 선언하고, 사용하고자 하는 사칙연산을 입력한 후, fields 하위에 피연산자들을 입력합니다.(수식 왼쪽 피연산자 → 수식 오른쪽 피연산자 순서)</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8038-aa8c-c34cdb3e8661" class="bulleted-list"><li style="list-style-type:disc">field 내에 묶여있는 순서대로 계산이 이루어지기 때문에 괄호가 필요한 경우 등 수식의 순서를 잘 고려해서 수식을 만듭니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80f5-85fa-c6c128787ae2" class="toggle"><li><details open=""><summary>field 값은 <a href="https://docs.google.com/spreadsheets/d/1vTuiQ_WAmc4zcLq2gNM4m9WBvgrPQJ36V2Ds97Zv2tU/edit?gid=913557392#gid=913557392">서비스스펙 </a>metric 시트의 G열(metric_key)를 사용하시거나 리포트에서 설정값 복사-붙여넣기를 할 때 나오는 메트릭 이름을 사용하시면 됩니다.</summary><div style="display:contents" dir="ltr"><figure id="28ea69a8-2507-80ce-9237-c1a53c715bee" class="image"><a href="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/Screen_Shot_2022-11-09_at_2.42.19_PM.png"><img style="width:270.99432373046875px" src="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/Screen_Shot_2022-11-09_at_2.42.19_PM.png"/></a></figure></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8092-b076-c5cb4de98a03" class="bulleted-list"><li style="list-style-type:disc">Custom metric, Cohort Metiric, Self-serve 메트릭도 수식을 만들 때 사용할 수 있습니다. 다만, 해당 메트릭이 실제로 존재해야 리포트에서 에러가 나지 않으므로, 해당 메트릭들을 선택하여 데이터를 한번 불러온 후에 Actuals 리포트에서 설정값 복사를 하여 metric 이름을 확인하는 방법을 추천합니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8076-b9ff-c846490ad910" class="bulleted-list"><li style="list-style-type:disc"><mark class="highlight-red"><strong>단, Calculated Metric은 수식을 만들 때 사용할 수 없습니다.</strong></mark><mark class="highlight-default"> 필요한 경우 해당 Calculated Metric의 정의를 복사해와서 사용하세요.</mark></li></ul></div><div style="display:contents" dir="auto"><p id="2a9a69a8-2507-80cd-bc58-cbea6e907226" class="">
+</p></div><div style="display:contents" dir="auto"><h3 id="28ea69a8-2507-806a-a349-f1fa8a50fe27" class="">주의사항</h3></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8028-9e81-e0dc1b4f4f92" class="bulleted-list"><li style="list-style-type:disc">고객사 앱에 적용하기 전에 ablog(organization id: 1872465354)에 먼저 적용해서 사용해보시는 걸 추천합니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80e1-81ad-ce172fdc76b5" class="bulleted-list"><li style="list-style-type:disc">Key나 Display name은 한 조직 내에서 동일한 값을 사용할 수 없습니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-804d-bcf5-c2591d19ed8d" class="bulleted-list"><li style="list-style-type:disc">만들고 나서 계산식 대로 계산이 잘 되는지 Actuals 리포트에서 한번 확인해보시는 것도 추천합니다. 툴팁에 수식설명이 나오므로 툴팁에 들어간 메트릭과 함께 calculated metric을 불러오시면 확인이 편리합니다.<div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8025-9775-c5827e5bed6e" class="bulleted-list"><li style="list-style-type:circle">ex. CPI 확인을 위해서 installs, cost, CPI를 함께 불러오면 편합니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-808b-a23a-d168bfa87e42" class="bulleted-list"><li style="list-style-type:circle">문제 없어야 하지만 값이 먼가 이상하다 → <span class="user">@Jaewan Park</span> <span class="user">@Youmin Park</span> <span class="user">@jonghyun choo</span> <span class="user">@Jeongtae Kim</span>  에게 문의</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80f2-b997-f8e4f14ff899" class="bulleted-list"><li style="list-style-type:circle">0.005 미만의 값은 0으로 표시됩니다.</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80f2-ab84-d423c16f98f1" class="bulleted-list"><li style="list-style-type:disc">만들어진 Calculated metric은 Marketer, Agency, Media partner 모두 사용할 수 있습니다. </li></ul></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-8067-951f-f373be26c1bf" class="">
+</p></div><div style="display:contents" dir="auto"><h2 id="28ea69a8-2507-8019-b550-c33e99be991d" class="">수식 생성/수정 검증</h2></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-808d-b7d7-fb2ce5dbc473" class="bulleted-list"><li style="list-style-type:disc">생성하고자 하는 수식을 검증하는 기능을 제공합니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8050-ba02-ca120d2111d6" class="toggle"><li><details open=""><summary>입력한 수식의 JSON 포맷의 형태를 자동으로 검증합니다.</summary><div style="display:contents" dir="auto"><p id="28ea69a8-2507-8014-9929-f8d979a42b43" class="">해당 기능은 수식 입력후 control + enter 혹은 command + enter 를 입력, 혹은 해당 인풋에서 선택해제시 해당 수식 포맷이 검증됩니다. (사용하는 메트릭들의 유효성은 생성/수정 버튼을 클릭후에 검증됩니다.)</p></div><div style="display:contents" dir="ltr"><figure id="28ea69a8-2507-8031-bc55-ff080c48689f" class="image"><a href="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/image%202.png"><img style="width:2297px" src="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/image%202.png"/></a></figure></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80d0-9e6b-f23b51b23722" class="toggle"><li><details open=""><summary>입력한 수식의 메트릭에 잘못된 메트릭이 있다면, 해당 생성에 실패합니다.</summary><div style="display:contents" dir="ltr"><figure id="28ea69a8-2507-8052-94a0-cabc19d7c506" class="image"><a href="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/image%203.png"><img style="width:2304px" src="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/image%203.png"/></a></figure></div></details></li></ul></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-80aa-97af-ee6f8f55326e" class="">
+</p></div><div style="display:contents" dir="auto"><h1 id="28ea69a8-2507-80eb-920f-e76b60158951" class="">Calculated metric 리스트 확인</h1></div><div style="display:contents" dir="ltr"><figure id="28ea69a8-2507-8018-9cf1-f393b4641021" class="image"><a href="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/image%204.png"><img style="width:2310px" src="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/image%204.png"/></a></figure></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80ca-bdfb-c8a436bb85c4" class="bulleted-list"><li style="list-style-type:disc">만들어진 Calculated metric의 전체 리스트를 확인할 수 있습니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-802a-85ce-e67945a2c333" class="bulleted-list"><li style="list-style-type:disc">Organization ID 별 메트릭을 조회합니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-802d-9e83-eed2cd5cdbb4" class="toggle"><li><details open=""><summary>key, display_name, 혹은 수식에 포함된 값 등으로 검색할 수 있습니다.</summary><div style="display:contents" dir="ltr"><figure id="28ea69a8-2507-805f-a1fa-c283b6dac9f9" class="image"><a href="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/image%205.png"><img style="width:2318px" src="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/image%205.png"/></a></figure></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8046-8f1c-f18bb242b2f0" class="toggle"><li><details open=""><summary>expression의 값을 그대로 복사해서 다른 메트릭의 수정/생성에 사용할 수 있습니다.</summary><div style="display:contents" dir="ltr"><figure id="28ea69a8-2507-80fb-b8c9-fa2fbd8745cf"><div class="source"><a href="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/%E1%84%92%E1%85%AA%E1%84%86%E1%85%A7%E1%86%AB_%E1%84%80%E1%85%B5%E1%84%85%E1%85%A9%E1%86%A8_2025-10-16_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_2.03.48.mov">attachment:7fdbade5-34b6-4ef6-913b-d41651353792:화면_기록_2025-10-16_오후_2.03.48.mov</a></div></figure></div></details></li></ul></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-801f-9343-f8db3a438fc8" class="">
+</p></div><div style="display:contents" dir="auto"><h1 id="28ea69a8-2507-8014-87d1-cfa648660ddf" class="">Calculated metric 수정</h1></div><div style="display:contents" dir="ltr"><figure id="28ea69a8-2507-80c1-9694-f6faacc79033" class="image"><a href="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/image%206.png"><img style="width:2311px" src="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/image%206.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="28ea69a8-2507-80ed-8bee-c234caa6208b" class="image"><a href="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/image%207.png"><img style="width:2336px" src="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/image%207.png"/></a></figure></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80b1-bc54-da4cbdb15da3" class="bulleted-list"><li style="list-style-type:disc">위 리스트에서 메트릭을 선택하면 하단에 해당 메트릭에 대한 정보를 확인할 수 있습니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8002-9bc0-d9ba55abc37a" class="bulleted-list"><li style="list-style-type:disc">특정 Calculated Metric을 선택하면 테이블 하단에 해당 메트릭을 수정할 수 있는 UI가 생성됩니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-804b-98d3-cd8703eef8ed" class="bulleted-list"><li style="list-style-type:disc">메트릭은 한번에 하나씩 선택하여 수정/삭제할 수있습니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8037-9b9c-f8c15f69dd46" class="bulleted-list"><li style="list-style-type:disc">Organization ID, Key, Display Name, Expressions 중 필요한 부분을 수정한 후 Edit 버튼을 누르면 수정됩니다. <div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8016-8d32-c4203ded581a" class="bulleted-list"><li style="list-style-type:circle">Organization ID나 Key는 함부로 수정하게 되면 기존에 해당 Calculated metric을 사용하던 고객이 사용하지 못하게 되므로 신중하게 수정하세요!</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-80fd-b763-d1b85eb61bcb" class="">
+</p></div><div style="display:contents" dir="auto"><h1 id="28ea69a8-2507-805d-bb7e-d13148612e15" class="">Calculated metric 삭제</h1></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80dc-a404-c7ea42d53a33" class="bulleted-list"><li style="list-style-type:disc">위 리스트에서 삭제하고자 하는 메트릭을 선택한 후 Delete 버튼을 누르면 삭제됩니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8072-8e2e-f0b506318a0f" class="bulleted-list"><li style="list-style-type:disc">버튼을 누르면 정말로 삭제하시겠습니까 확인 버튼이 뜨고 Confirm을 누르면 삭제됩니다.<div style="display:contents" dir="auto"><ul id="28ea69a8-2507-804a-bb6f-f45f5796c4a7" class="bulleted-list"><li style="list-style-type:circle">동일한 display name과 수식으로 다시 생성한다하여도 기존에 저장되어있던 리포트에서는 삭제된 메트릭을 사용할 수 없습니다.(메트릭별 부여되는 id가 달라서 다른 메트릭으로 취급되어서 그렇습니다.)<div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8089-936d-e2a7060f5876" class="bulleted-list"><li style="list-style-type:square">단, 동일한 key로 다시 생성한다면 사용할 수 있습니다</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-805c-92f8-cfb217f19779" class="toggle"><li><details open=""><summary>삭제된 메트릭이 Saved report에 포함되어 있는 경우, 메트릭 삭제 후 리포트 최초 진입 시(전체 유저 통틀어서 한번만 뜹니다.) 에 메트릭을 찾을 수 없다는 에러가 뜨고 확인 버튼을 누르면 해당 메트릭이 saved report에서 제외된 상태로 데이터가 불러와지고 리포트가 다시 저장됩니다. → 아래 부분 고객사 안내 필요</summary><div style="display:contents" dir="ltr"><figure id="28ea69a8-2507-8003-a66d-de4dc1a32a32" class="image"><a href="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/Screen_Shot_2022-11-09_at_3.20.08_PM.png"><img style="width:651.984375px" src="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/Screen_Shot_2022-11-09_at_3.20.08_PM.png"/></a></figure></div></details></li></ul></div></li></ul></div><div style="display:contents" dir="auto"><h1 id="28ea69a8-2507-80f1-8503-c3448e27e15e" class="">Expression Template</h1></div><div style="display:contents" dir="ltr"><figure class="block-color-teal_background callout" style="white-space:pre-wrap;display:flex" id="28ea69a8-2507-804f-ad7b-d8600b2f86b1"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">Airbridge 백오피스에서 Calculated metrics 추가 시 활용되는 수식 (JSON Schema) 템플릿 모음입니다. 신규 추가 metric에 대해서도 템플릿 자유롭게 추가해 주세요🙏🏻</div></figure></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-809e-8586-e4feedf99668" class="toggle"><li><details open=""><summary><strong>Cost Per Install - CPI</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-807d-a30c-e541769b15ac" class="bulleted-list"><li style="list-style-type:disc">Cost / Install</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80a8-b90b-d7d9954998d9" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{&quot;fn&quot;: &quot;/&quot;, &quot;type&quot;: &quot;arithmetic&quot;, &quot;fields&quot;: [{&quot;type&quot;: &quot;fieldAccess&quot;, &quot;metric&quot;: &quot;cost_channel&quot;}, {&quot;type&quot;: &quot;fieldAccess&quot;, &quot;metric&quot;: &quot;app_installs&quot;}]}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8095-8eba-ea0aa4234dd5" class="toggle"><li><details open=""><summary><strong>Cost Per Purchase - CPP (Complete Order) - App</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8057-8fdf-ecb3b193aba8" class="bulleted-list"><li style="list-style-type:disc">Cost / Complete order (App)</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-806e-b05e-c7d01c2b24f1" class="code code-wrap"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">{&quot;fn&quot;: &quot;/&quot;, &quot;type&quot;: &quot;arithmetic&quot;, &quot;fields&quot;: [{&quot;type&quot;: &quot;fieldAccess&quot;, &quot;metric&quot;: &quot;cost_channel&quot;}, {&quot;type&quot;: &quot;fieldAccess&quot;, &quot;metric&quot;: &quot;app_order_complete&quot;}]}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-809a-829d-e4856fdf45ef" class="toggle"><li><details open=""><summary><strong>Cost Per Purchase - CPP (Complete Order) - Web</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80f2-bee2-f3e6d99e90f6" class="bulleted-list"><li style="list-style-type:disc">Cost / Complete order (Web)</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8087-9db7-dbfa5c021e3c" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{&quot;fn&quot;: &quot;/&quot;, &quot;type&quot;: &quot;arithmetic&quot;, &quot;fields&quot;: [{&quot;type&quot;: &quot;fieldAccess&quot;, &quot;metric&quot;: &quot;cost_channel&quot;}, {&quot;type&quot;: &quot;fieldAccess&quot;, &quot;metric&quot;: &quot;web_order_complete&quot;}]}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8070-a5d9-dae4509e7602" class="toggle"><li><details open=""><summary><strong>Cost Per Purchase - CPP (Complete Order) - App+Web</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80a0-bee7-cb4c865a49d1" class="bulleted-list"><li style="list-style-type:disc">Cost / Complete order (App+Web)</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80fa-ac9a-de1fd98d2014" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{&quot;fn&quot;: &quot;/&quot;, &quot;type&quot;: &quot;arithmetic&quot;, &quot;fields&quot;: [{&quot;type&quot;: &quot;fieldAccess&quot;, &quot;metric&quot;: &quot;cost_channel&quot;}, {&quot;type&quot;: &quot;fieldAccess&quot;, &quot;metric&quot;: &quot;app_web_order_complete&quot;}]}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8013-b389-d106d15b5bfb" class="toggle"><li><details open=""><summary><strong>Click-through Rate - CTR</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-807c-846f-fea00d56c739" class="bulleted-list"><li style="list-style-type:disc">Click / Impressions * 100</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-808d-b86b-f9bece727339" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+   &quot;fn&quot;: &quot;*&quot;,
+   &quot;type&quot;: &quot;arithmetic&quot;,
+   &quot;fields&quot;: [
+     {
+       &quot;fn&quot;: &quot;/&quot;, 
+       &quot;type&quot;: &quot;arithmetic&quot;, 
+       &quot;fields&quot;: [
+         {
+           &quot;type&quot;: &quot;fieldAccess&quot;, 
+           &quot;metric&quot;: &quot;clicks&quot;
+         }, 
+         {
+           &quot;type&quot;: &quot;fieldAccess&quot;,
+           &quot;metric&quot;: &quot;impressions&quot;
+         }
+       ]
+     }, 
+     {
+       &quot;type&quot;: &quot;constant&quot;, 
+       &quot;value&quot;: 100
+     }
+   ]
+ }</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8083-b96c-fe68bb9be426" class="toggle"><li><details open=""><summary><strong>ARPU  (App)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80d1-8ad4-e77a1d0074c8" class="bulleted-list"><li style="list-style-type:disc">app_revenue / app_unique_users</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80d5-b414-e7a4cda6f1d9" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;/&quot;, 
+	&quot;type&quot;: &quot;arithmetic&quot;, 
+	&quot;fields&quot;: [
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;, 
+			&quot;metric&quot;: &quot;app_revenue&quot;
+		}, 
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;, 
+			&quot;metric&quot;: &quot;app_unique_users&quot;
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80e1-9034-cd4287ab5212" class="toggle"><li><details open=""><summary><strong>ARPPU (App)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80de-a571-d9bdbd23d14d" class="bulleted-list"><li style="list-style-type:disc">app_revenue / app_order_complete_users</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80c6-b5b6-ce4040cb60a6" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;/&quot;, 
+	&quot;type&quot;: &quot;arithmetic&quot;, 
+	&quot;fields&quot;: [
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;, 
+			&quot;metric&quot;: &quot;app_revenue&quot;
+		}, 
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;, 
+			&quot;metric&quot;: &quot;app_order_complete_users&quot;
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-801e-8bf4-f453a56af335" class="toggle"><li><details open=""><summary><strong>CPM (App)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-801d-a08e-e15bba6bdb30" class="bulleted-list"><li style="list-style-type:disc">(Cost (Channel) / Ad Impression (App)) *1000</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8004-a934-d14943345ecd" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;*&quot;, 
+	&quot;type&quot;: &quot;arithmetic&quot;, 
+	&quot;fields&quot;: [
+		{
+			&quot;fn&quot;: &quot;/&quot;, 
+			&quot;type&quot;: &quot;arithmetic&quot;, 
+			&quot;fields&quot;: [
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;cost_channel&quot;
+				}, 
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_ad_impression&quot;
+				}
+			]
+		}, 
+		{
+			&quot;type&quot;: &quot;constant&quot;, 
+			&quot;value&quot;: 1000
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80b8-adbc-ff62c3b7fb91" class="toggle"><li><details open=""><summary><strong>eCPM (App)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80c9-ac88-d28d95a40b8f" class="bulleted-list"><li style="list-style-type:disc">(Ad Impression Revenue (App) / Ad Impression (App)) *1000</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80d1-a33e-f31b69d889e6" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;*&quot;, 
+	&quot;type&quot;: &quot;arithmetic&quot;, 
+	&quot;fields&quot;: [
+		{
+			&quot;fn&quot;: &quot;/&quot;, 
+			&quot;type&quot;: &quot;arithmetic&quot;, 
+			&quot;fields&quot;: [
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_ad_impression_revenue&quot;
+				},
+			  {
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_ad_impression&quot;
+				}
+			]
+		}, 
+		{
+			&quot;type&quot;: &quot;constant&quot;, 
+			&quot;value&quot;: 1000
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-808b-846b-c01f020c5cec" class="toggle"><li><details open=""><summary><strong>Average Order Value - AOV (App)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8078-9dbd-fc833a006877" class="bulleted-list"><li style="list-style-type:disc">App Revenue / App Order Complete</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8029-b608-cd83b30c7026" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;/&quot;,
+	&quot;type&quot;: &quot;arithmetic&quot;, 
+	&quot;fields&quot;: [
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;, 
+			&quot;metric&quot;: &quot;app_revenue&quot;
+		},
+		{&quot;type&quot;: &quot;fieldAccess&quot;,
+		 &quot;metric&quot;: &quot;app_order_complete&quot;
+		}
+	]
+}</code></pre></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-8000-bd36-e5fda1465c30" class="">
+</p></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-801c-83eb-cb879de17a79" class="toggle"><li><details open=""><summary><strong>Profit/Loss (Revenue - Cost) (App)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8049-bac3-e42e3e8d6190" class="bulleted-list"><li style="list-style-type:disc">Total Ad Revenue (App) - Cost (Channel)</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80c2-8a28-d0d38852a200" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;-&quot;,
+	&quot;type&quot;: &quot;arithmetic&quot;,
+	&quot;fields&quot;: [
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;, 
+			&quot;metric&quot;: &quot;app_ad_revenue&quot;
+		}, 
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;, 
+			&quot;metric&quot;: &quot;cost_channel&quot;
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-804a-9d34-d0f1995ed31d" class="toggle"><li><details open=""><summary><strong>Profit % (App)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-803f-9cee-db126a520762" class="bulleted-list"><li style="list-style-type:disc">(Cost (Channel)) / Total Ad Revenue (App))*100</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80c9-81e3-e33f85237d9b" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+ &quot;type&quot;: &quot;arithmetic&quot;,
+    &quot;fn&quot;: &quot;*&quot;,
+    &quot;fields&quot;: [
+        {
+            &quot;type&quot;: &quot;arithmetic&quot;,
+            &quot;fn&quot;: &quot;/&quot;,
+            &quot;fields&quot;: [
+                {
+                    &quot;type&quot;: &quot;fieldAccess&quot;,
+                    &quot;metric&quot;: &quot;cost_channel&quot;
+                },
+                {
+                    &quot;type&quot;: &quot;fieldAccess&quot;,
+                    &quot;metric&quot;: &quot;app_ad_revenue&quot;
+                }
+            ]
+        },
+        {
+			    &quot;type&quot;: &quot;constant&quot;, 
+					&quot;value&quot;: 100
+        }
+    ]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80fc-93d4-da20172b8023" class="toggle"><li><details open=""><summary><strong>가입 단가 (App)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80fa-82fd-eec6b7c8e824" class="bulleted-list"><li style="list-style-type:disc">(<strong>Channel (Cost) / Sign-up (App)) - 1000</strong></li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8028-8221-e1e8d75d6740" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+ &quot;type&quot;: &quot;arithmetic&quot;,
+    &quot;fn&quot;: &quot;-&quot;,
+    &quot;fields&quot;: [
+        {
+            &quot;type&quot;: &quot;arithmetic&quot;,
+            &quot;fn&quot;: &quot;/&quot;,
+            &quot;fields&quot;: [
+                {
+                    &quot;type&quot;: &quot;fieldAccess&quot;,
+                    &quot;metric&quot;: &quot;cost_channel&quot;
+                },
+                {
+                    &quot;type&quot;: &quot;fieldAccess&quot;,
+                    &quot;metric&quot;: &quot;app_sign_up&quot;
+                }
+            ]
+        },
+        {
+            &quot;type&quot;: &quot;constant&quot;,
+            &quot;value&quot;: 1000
+        }
+    ]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-803f-8c99-d5826aa6b87e" class="toggle"><li><details open=""><summary><strong>CR from Trial, % </strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8019-97e7-f2642b06fb1d" class="bulleted-list"><li style="list-style-type:disc">(<code>trial_started (App)</code>/<code>trial_converted (App)</code>)*<code>100</code></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80cd-9397-e480379258d3" class="bulleted-list"><li style="list-style-type:disc">Custom event 활용 예시 (metric_key: app_custom_<code>{custom_goal_category}</code>) </li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8040-93fd-c40e8be76e9d" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;*&quot;,
+	&quot;type&quot;: &quot;arithmetic&quot;,
+	&quot;fields&quot;: [
+		{
+			&quot;fn&quot;: &quot;/&quot;,
+			&quot;type&quot;: &quot;arithmetic&quot;, 
+			&quot;fields&quot;: [
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_custom_trial_started&quot;
+				},
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_custom_trial_converted&quot;
+				}
+			]
+		}, 
+		{
+			&quot;type&quot;: &quot;constant&quot;, 
+			&quot;value&quot;: 100
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8012-869d-e9375074b67d" class="toggle"><li><details open=""><summary><strong>CR to Purchase from Install, %</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8057-897d-c65497eb6d66" class="bulleted-list"><li style="list-style-type:disc">(&#x27;<code>subscription_started (App)</code>&#x27;+&#x27;<code>trial_converted (App)</code>&#x27;)/&#x27;<code>Install (App)</code>&#x27;×<code>100</code></li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8089-a4de-e9dbc0f07c9c" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+  &quot;fn&quot;: &quot;*&quot;,
+  &quot;type&quot;: &quot;arithmetic&quot;,
+  &quot;fields&quot;: [
+    {
+      &quot;fn&quot;: &quot;/&quot;,
+      &quot;type&quot;: &quot;arithmetic&quot;,
+      &quot;fields&quot;: [
+        {
+          &quot;type&quot;: &quot;arithmetic&quot;,
+          &quot;fn&quot;: &quot;+&quot;,
+          &quot;fields&quot;: [
+            {
+              &quot;type&quot;: &quot;fieldAccess&quot;,
+              &quot;metric&quot;: &quot;app_custom_subscription_started&quot;
+            },
+            {
+              &quot;type&quot;: &quot;fieldAccess&quot;,
+              &quot;metric&quot;: &quot;app_custom_trial_converted&quot;
+            }
+          ]
+        },
+        {
+          &quot;type&quot;: &quot;fieldAccess&quot;,
+          &quot;metric&quot;: &quot;app_installs&quot;
+        }
+      ]
+    },
+    {
+      &quot;type&quot;: &quot;constant&quot;,
+      &quot;value&quot;: 100
+    }
+  ]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8012-8005-debbe94da32d" class="toggle"><li><details open=""><summary><strong>Parents, %</strong></summary><div style="display:contents" dir="auto"><p id="28ea69a8-2507-80fb-ab4f-c6e331c41cb2" class="">&#x27;<code>parent_selected (App)</code>&#x27;÷&#x27;<code>Install (App)</code>&#x27;×<code>100</code></p></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-8058-b887-d90d99682d9e" class="">app_custom_parent_selected</p></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-8074-8121-e7f164dfde3a" class="">app_installs</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8061-9423-e7de16bb4371" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;*&quot;,
+	&quot;type&quot;: &quot;arithmetic&quot;,
+	&quot;fields&quot;: [
+		{
+			&quot;fn&quot;: &quot;/&quot;,
+			&quot;type&quot;: &quot;arithmetic&quot;, 
+			&quot;fields&quot;: [
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_custom_parent_selected&quot;
+				},
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_installs&quot;
+				}
+			]
+		}, 
+		{
+			&quot;type&quot;: &quot;constant&quot;, 
+			&quot;value&quot;: 100
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80fa-8ae6-da934cbe3099" class="toggle"><li><details open=""><summary><strong>ROI (App)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8036-b78e-d6f72be96033" class="bulleted-list"><li style="list-style-type:disc"><code>ROI</code>=’<code>Revenue (App)</code>’÷’<code>Cost (Channel)</code>’</li></ul></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-806b-90c2-c1db663d7937" class="">app_revenue</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8056-a107-ffaebb17de73" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;/&quot;,
+	&quot;type&quot;: &quot;arithmetic&quot;,
+	&quot;fields&quot;: [
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;, 
+			&quot;metric&quot;: &quot;app_revenue&quot;
+		}, 
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;, 
+			&quot;metric&quot;: &quot;cost_channel&quot;
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-809e-8f02-fa925515bb51" class="toggle"><li><details open=""><summary><strong>Click-to-Install Rate</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8075-9bcf-dbd31136c10e" class="bulleted-list"><li style="list-style-type:disc">Installs / Clicks * 100</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-809d-816d-fc0f4a59c329" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;*&quot;, 
+	&quot;type&quot;: &quot;arithmetic&quot;, 
+	&quot;fields&quot;: [
+		{
+			&quot;fn&quot;: &quot;/&quot;, 
+			&quot;type&quot;: &quot;arithmetic&quot;, 
+			&quot;fields&quot;: [
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_installs&quot;
+				}, 
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;clicks&quot;
+				}
+			]
+		}, 
+		{
+			&quot;type&quot;: &quot;constant&quot;, 
+			&quot;value&quot;: 100
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80b1-988d-f50e1ba5ebc1" class="toggle"><li><details open=""><summary><strong>Click (Channel)-to-Install Rate</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8069-bbe2-dd416fb4f19c" class="bulleted-list"><li style="list-style-type:disc">Installs / Clicks * 100</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8064-a217-fb990b5697ae" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;*&quot;, 
+	&quot;type&quot;: &quot;arithmetic&quot;, 
+	&quot;fields&quot;: [
+		{
+			&quot;fn&quot;: &quot;/&quot;, 
+			&quot;type&quot;: &quot;arithmetic&quot;, 
+			&quot;fields&quot;: [
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_installs&quot;
+				}, 
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;clicks_channel&quot;
+				}
+			]
+		}, 
+		{
+			&quot;type&quot;: &quot;constant&quot;, 
+			&quot;value&quot;: 100
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80f6-90c3-dc8f1df01f6b" class="toggle"><li><details open=""><summary><strong>Click-to-Unique Install Rate</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80b2-9476-dbcbdb050e08" class="bulleted-list"><li style="list-style-type:disc">First Installs / Clicks * 100</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80e4-b5fe-d9594f47751c" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;*&quot;, 
+	&quot;type&quot;: &quot;arithmetic&quot;, 
+	&quot;fields&quot;: [
+		{
+			&quot;fn&quot;: &quot;/&quot;, 
+			&quot;type&quot;: &quot;arithmetic&quot;, 
+			&quot;fields&quot;: [
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_first_installs&quot;
+				}, 
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;clicks&quot;
+				}
+			]
+		}, 
+		{
+			&quot;type&quot;: &quot;constant&quot;, 
+			&quot;value&quot;: 100
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-803a-bcfa-c15128100939" class="toggle"><li><details open=""><summary>실 구매액(App)</summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80d1-a8c0-ed42fbd8c5f3" class="bulleted-list"><li style="list-style-type:disc">구매액(App) - 환불액(App)</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8074-b81b-c2089144b144" class="code code-wrap"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;-&quot;,
+	&quot;type&quot;: &quot;arithmetic&quot;,
+	&quot;fields&quot;: [
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;,
+			&quot;metric&quot;: &quot;app_revenue&quot;
+			}, 
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;,
+			&quot;metric&quot;: &quot;app_refund_amount&quot;
+		}
+	]	
+}
+</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80b8-a15f-cef3b277d224" class="toggle"><li><details open=""><summary>실 구매 횟수(App)</summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8091-a71f-d9f80e187802" class="bulleted-list"><li style="list-style-type:disc">구매 완료 (App) 수 - 구매 취소(App) 수</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8074-bd7b-cb2a51326b4b" class="code code-wrap"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;-&quot;,
+	&quot;type&quot;: &quot;arithmetic&quot;,
+	&quot;fields&quot;: [
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;,
+			&quot;metric&quot;: &quot;app_order_complete&quot;
+			}, 
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;,
+			&quot;metric&quot;: &quot;app_order_cancel&quot;
+		}
+	]	}
+</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><h1 id="28ea69a8-2507-801c-add0-d3ed25d6b616" class="">EN</h1></div><div style="display:contents" dir="auto"><hr id="28ea69a8-2507-8058-8615-c84c1cc03655"/></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-80df-80f1-f407c6d31b93" class="">
+</p></div><div style="display:contents" dir="ltr"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="28ea69a8-2507-801c-9bfc-c17f3794ff2d"><div style="font-size:1.5em"><span class="icon">❓</span></div><div style="width:100%">Having troubles? Tag <code>@abr-backend-report</code><em><strong> </strong></em>in the <strong><span style="border-bottom:0.05em solid">#all-backend</span></strong> slack channel and feel free to ask any questions!</div></figure></div><div style="display:contents" dir="auto"><h1 id="28ea69a8-2507-80d0-93ad-d3858fa50057" class="">How to Access Appsmith Calculated Metric </h1></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8010-b418-d47a07440ec0" class="bulleted-list"><li style="list-style-type:disc">Get access permission to Appsmith. <div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8059-8912-d9944855514a" class="bulleted-list"><li style="list-style-type:circle">Log in to “Flex,” fill out and submit the “SW License·Account·Permission Request” form to request access to Appsmith.</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80c0-aea4-e94960b5a50b" class="bulleted-list"><li style="list-style-type:disc">Log in to Appsmith and click <a href="https://appsmith.ab180.co/user/login?redirectUrl=https%3A%2F%2Fappsmith.ab180.co%2Fapplications%2F60753c20f32bc316dc8d266e%2Fpages%2F6369c35c4a771242a6d5192c">Calculated Metric</a>. </li></ul></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-803b-9b6a-e13937afca4f" class="">
+</p></div><div style="display:contents" dir="auto"><h1 id="28ea69a8-2507-8078-90da-d89b0b54acfd" class="">How to Create Calculated Metrics</h1></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-8036-ba1b-dcb23b4d572a" class="">
+</p></div><div style="display:contents" dir="auto"><h2 id="28ea69a8-2507-8065-b05e-f4af0c7f731e" class="">Fill in the fields</h2></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8013-997f-fdc625dd39d6" class="bulleted-list"><li style="list-style-type:disc">Organization ID: Enter the Organization ID of the organization that you want to create the Calculated Metric for. </li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8045-a6b3-d74c3fd5780a" class="bulleted-list"><li style="list-style-type:disc">Key: Enter the identifier for the Calculated Metric that should be unique to the organization. </li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8030-a149-c0c535a9f9bc" class="bulleted-list"><li style="list-style-type:disc">Display Name: Enter the display name of the Calculated Metric that will be shown in the Actuals Report and Trend Report. <div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8055-8948-c52409a57a0a" class="toggle"><li><details open=""><summary>The display name will appear in the metric option drop-down list. </summary><div style="display:contents" dir="ltr"><figure id="28ea69a8-2507-8033-bf61-f35cf2f41f8b" class="image"><a href="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/Screen_Shot_2022-11-09_at_2.31.45_PM.png"><img style="width:652.0596313476562px" src="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/Screen_Shot_2022-11-09_at_2.31.45_PM.png"/></a></figure></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80fe-a6cc-cabc4296326f" class="bulleted-list"><li style="list-style-type:circle">The tooltip for the Calculated Metric will contain the configured formula.  </li></ul></div></li></ul></div><div style="display:contents" dir="auto"><h2 id="28ea69a8-2507-8061-99a7-f4e2f6a7f2d3" class="">Create formula</h2></div><div style="display:contents" dir="auto"><h3 id="28ea69a8-2507-80ba-8fb4-f51dee27aa81" class="">Rules</h3></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8024-9d36-dd4081eab11c" class="bulleted-list"><li style="list-style-type:disc">The formula must be in JSON format. </li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80a0-8f06-fb64b70a4223" class="bulleted-list"><li style="list-style-type:disc">The formula can contain metrics, basic arithmetic operations (<code>+</code> <code>-</code> <code>*</code> <code>/</code>), and real numbers.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80df-96d3-e720af346dfe" class="bulleted-list"><li style="list-style-type:disc">Declare &#x27;arithmetic&#x27;, specify the basic arithmetic operation you want to use, and then enter the operands under &#x27;fields&#x27;. (Input the left operand of the expression first, followed by the right operand.)</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80d0-a454-c512a89a2627" class="bulleted-list"><li style="list-style-type:disc">Since calculations are performed in the order they are grouped within the field, be sure to carefully consider the order of the expression and use parentheses when necessary.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-806e-8a82-f9f95b468deb" class="toggle"><li><details open=""><summary>You can use the field value from column G (metric_key) of the <a href="https://docs.google.com/spreadsheets/d/1vTuiQ_WAmc4zcLq2gNM4m9WBvgrPQJ36V2Ds97Zv2tU/edit?usp=sharing">service specification metric sheet</a>, or you can use the metric names that appear when copying and pasting the set values from the report.”</summary><div style="display:contents" dir="ltr"><figure id="28ea69a8-2507-8048-be4f-d7aca806c16c" class="image"><a href="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/Screen_Shot_2022-11-09_at_2.42.19_PM.png"><img style="width:270.99432373046875px" src="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/Screen_Shot_2022-11-09_at_2.42.19_PM.png"/></a></figure></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80f6-a2d2-fa099f9a601c" class="bulleted-list"><li style="list-style-type:disc">Custom Metrics, Cohort Metrics or Self-serve Metrics can be used when creating formulas. However, to avoid errors in the reports, the corresponding metrics must actually exist. Therefore, it is advised to select these metrics and load the data, then copy the set values from the Actuals Report to confirm the metric names.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-805f-8a7e-f128e3a4e964" class="bulleted-list"><li style="list-style-type:disc"><mark class="highlight-red"><strong>Note that existing Calculated Metrics cannot be used when creating formulas. </strong></mark><mark class="highlight-default">If needed, copy the formula of the existing Calculated Metric and use it for the new formula. </mark></li></ul></div><div style="display:contents" dir="auto"><h3 id="28ea69a8-2507-80fd-a7f9-c430bfbd57f0" class="">Attention</h3></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80b4-83fe-e3f1d95de5f3" class="bulleted-list"><li style="list-style-type:disc">Before adding the Calculated Metric to the customer’s dashboard right away, try it out first on the <strong>ablog</strong> dashboard (Organization ID: 1872465354). </li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80fe-a20d-edfbf94a834d" class="bulleted-list"><li style="list-style-type:disc">The <code>Key</code> and the <code>Display Name</code> must be unique within the organization. </li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80a7-88f2-d4436e5b61ab" class="bulleted-list"><li style="list-style-type:disc">Test the metric in the Actuals Report before adding it to the customer’s dashboard. Note that the formula will appear in the tooltip. <div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8070-8ac6-c5a85c443aae" class="bulleted-list"><li style="list-style-type:circle">For example, when testing “CPI” as a new Calculated Metric, Installs, cost, and CPI should be loaded.</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-805e-9556-f903a14dfe87" class="bulleted-list"><li style="list-style-type:disc">If something seems off, don’t hesitate to contact <span class="user">@Bumsoo Oh(오범수)</span> <span class="user">@Mingyu Jo</span> <span class="user">@Changjong Ryu</span> </li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8013-8d75-f29eab91c33a" class="bulleted-list"><li style="list-style-type:disc">Values below 0.005 are displayed as 0. </li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8041-9505-e746e0250817" class="bulleted-list"><li style="list-style-type:disc">The Calculated Metric is available to all Airbridge users within the organization, regardless of their roles.</li></ul></div><div style="display:contents" dir="auto"><h1 id="28ea69a8-2507-8093-b5f1-e0f0fbff5cbf" class="">How to View the Calculated Metric List</h1></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80d5-8e7a-d09229c43d89" class="bulleted-list"><li style="list-style-type:disc">You can view the full list of Calculated Metrics generated for the organization. </li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8073-ba9b-ce249d2bbc7d" class="bulleted-list"><li style="list-style-type:disc">You can search the list by organization_id, display_name, etc.</li></ul></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-8015-acec-fe98d48535e8" class="">
+</p></div><div style="display:contents" dir="auto"><h1 id="28ea69a8-2507-8070-a92f-cecb87964fc0" class="">How to Edit the Calculated Metrics</h1></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-801f-b164-f3e2ea1627ad" class="bulleted-list"><li style="list-style-type:disc">You can view the details of the Calculated Metrics by clicking on each of them in the list.</li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-809d-8618-fc87296bd476" class="bulleted-list"><li style="list-style-type:disc">You may edit the <code>Organization ID</code>, <code>Key</code>, <code>Display Name</code>, or <code>Expressions</code> and click <strong>Edit</strong> to apply changes.  <div style="display:contents" dir="auto"><ul id="28ea69a8-2507-800f-95b3-e6dff881ea07" class="bulleted-list"><li style="list-style-type:circle">Be extra careful when editing the <code>Organization ID</code> or <code>Key</code> as customers won’t be able to access the Calculated Metric if they are not accurate!</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-802a-b128-f87214ccbb50" class="">
+</p></div><div style="display:contents" dir="auto"><h1 id="28ea69a8-2507-80b2-9520-c9fd50f35f0f" class="">How to Delete the Calculated Metrics</h1></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8049-abf4-ecd31975b754" class="bulleted-list"><li style="list-style-type:disc">You may select a Calculated Metric from the list and click <strong>Delete. </strong></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-808f-bd52-c3502f3b5fd0" class="bulleted-list"><li style="list-style-type:disc">In the confirmation modal, Click <strong>Confirm </strong>to delete the Calculate Metric from the organization.<div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8036-be54-e9df3b4ab547" class="bulleted-list"><li style="list-style-type:circle">Even if you create the deleted Calculated Metric again using the same <code>Display Name</code> and formula, the deleted Calculated Metric cannot be used in the already Saved Reports. (This is because we allocate a unique ID for each metric, and therefore, the regenerated metric will still be considered a different metric.) <div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8022-97f3-e4be4de1d301" class="bulleted-list"><li style="list-style-type:square">However, if you use the same <code>Key</code>, the deleted Calculated Metric can be used in the already Saved Reports. </li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8044-a5b5-c89198d695fd" class="toggle"><li><details open=""><summary><strong>[Notify the Customer]</strong> If the deleted Calculated Metric is included in a Saved Report, the following error notice will appear at the first launch of the Saved Report once. Upon clicking <strong>확인 (OK)</strong>, the deleted Calculated Metric will be removed from the report config, and the report data will be refreshed and subsequently saved. </summary><div style="display:contents" dir="ltr"><figure id="28ea69a8-2507-80b2-a4aa-d7a0ed81ad6f" class="image"><a href="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/Screen_Shot_2022-11-09_at_3.20.08_PM.png"><img style="width:651.984375px" src="Calculated%20metric%20Backoffice(%EC%B9%BC%ED%81%98%EB%A0%88%EC%9D%B4%ED%8B%B0%EB%93%9C%20%EB%A9%94%ED%8A%B8%EB%A6%AD)%20%EA%B0%80%EC%9D%B4%EB%93%9C%20%EB%AC%B8%EC%84%9C/Screen_Shot_2022-11-09_at_3.20.08_PM.png"/></a></figure></div></details></li></ul></div></li></ul></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-8024-9ccc-d5bd11aa00ee" class="">
+</p></div><div style="display:contents" dir="auto"><h1 id="28ea69a8-2507-80e9-996a-dae960132979" class="">Expression Template</h1></div><div style="display:contents" dir="ltr"><figure class="block-color-teal_background callout" style="white-space:pre-wrap;display:flex" id="28ea69a8-2507-800f-bd20-c9ac6e282f23"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">Below are the formula (JSON Schema) templates that can be used when adding new calculated metrics. Feel free to add new templates below! 🙏🏻</div></figure></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-802d-8e36-dee71dedfeee" class="toggle"><li><details open=""><summary><strong>Cost Per Install - CPI</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-802a-85a0-e8ca2a7596f3" class="bulleted-list"><li style="list-style-type:disc">Cost / Install</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8073-8396-c1386c21eacb" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{&quot;fn&quot;: &quot;/&quot;, &quot;type&quot;: &quot;arithmetic&quot;, &quot;fields&quot;: [{&quot;type&quot;: &quot;fieldAccess&quot;, &quot;metric&quot;: &quot;cost_channel&quot;}, {&quot;type&quot;: &quot;fieldAccess&quot;, &quot;metric&quot;: &quot;app_installs&quot;}]}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-800a-9d51-c54de464ea1c" class="toggle"><li><details open=""><summary><strong>Cost Per Purchase - CPP (Complete Order) - App</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80ce-8f29-f17dd308d5ed" class="bulleted-list"><li style="list-style-type:disc">Cost / Complete order (App)</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-805b-a860-ee89c4589325" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{&quot;fn&quot;: &quot;/&quot;, &quot;type&quot;: &quot;arithmetic&quot;, &quot;fields&quot;: [{&quot;type&quot;: &quot;fieldAccess&quot;, &quot;metric&quot;: &quot;cost_channel&quot;}, {&quot;type&quot;: &quot;fieldAccess&quot;, &quot;metric&quot;: &quot;app_order_complete&quot;}]}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-809a-a4cd-f1c6be34374d" class="toggle"><li><details open=""><summary><strong>Cost Per Purchase - CPP (Complete Order) - Web</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8015-8320-e131d4049741" class="bulleted-list"><li style="list-style-type:disc">Cost / Complete order (Web)</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80ea-9035-f74cb1fac079" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{&quot;fn&quot;: &quot;/&quot;, &quot;type&quot;: &quot;arithmetic&quot;, &quot;fields&quot;: [{&quot;type&quot;: &quot;fieldAccess&quot;, &quot;metric&quot;: &quot;cost_channel&quot;}, {&quot;type&quot;: &quot;fieldAccess&quot;, &quot;metric&quot;: &quot;web_order_complete&quot;}]}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8063-a37c-d05092e71a45" class="toggle"><li><details open=""><summary><strong>Cost Per Purchase - CPP (Complete Order) - App+Web</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8016-ae7b-d3a9b08bd9c5" class="bulleted-list"><li style="list-style-type:disc">Cost / Complete order (App+Web)</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-802d-a4ed-d423a0326c9f" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{&quot;fn&quot;: &quot;/&quot;, &quot;type&quot;: &quot;arithmetic&quot;, &quot;fields&quot;: [{&quot;type&quot;: &quot;fieldAccess&quot;, &quot;metric&quot;: &quot;cost_channel&quot;}, {&quot;type&quot;: &quot;fieldAccess&quot;, &quot;metric&quot;: &quot;app_web_order_complete&quot;}]}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8030-85e7-e147e3834c4e" class="toggle"><li><details open=""><summary><strong>Click-through Rate - CTR</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8057-883f-f2a8c562781a" class="bulleted-list"><li style="list-style-type:disc">Click / Impressions * 100</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80a6-b94f-da88d23d024a" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{&quot;fn&quot;: &quot;*&quot;, &quot;type&quot;: &quot;arithmetic&quot;, &quot;fields&quot;: [{&quot;fn&quot;: &quot;/&quot;, &quot;type&quot;: &quot;arithmetic&quot;, &quot;fields&quot;: [{&quot;type&quot;: &quot;fieldAccess&quot;, &quot;metric&quot;: &quot;clicks&quot;}, {&quot;type&quot;: &quot;fieldAccess&quot;, &quot;metric&quot;: &quot;impressions&quot;}]}, {&quot;type&quot;: &quot;constant&quot;, &quot;value&quot;: 100}]}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80f3-abba-e9193f44d622" class="toggle"><li><details open=""><summary><strong>ARPU  (App)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80b2-851e-f7e9614a290e" class="bulleted-list"><li style="list-style-type:disc">app_revenue / app_unique_users</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8042-bd6f-d8bc85cca5c9" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;/&quot;, 
+	&quot;type&quot;: &quot;arithmetic&quot;, 
+	&quot;fields&quot;: [
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;, 
+			&quot;metric&quot;: &quot;app_revenue&quot;
+		}, 
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;, 
+			&quot;metric&quot;: &quot;app_unique_users&quot;
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-803f-a379-ec30ee264a7f" class="toggle"><li><details open=""><summary><strong>ARPPU (App)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-809b-a131-f708e2db5b8b" class="bulleted-list"><li style="list-style-type:disc">app_revenue / app_order_complete_users</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-808b-8abe-ef893dce8138" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;/&quot;, 
+	&quot;type&quot;: &quot;arithmetic&quot;, 
+	&quot;fields&quot;: [
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;, 
+			&quot;metric&quot;: &quot;app_revenue&quot;
+		}, 
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;, 
+			&quot;metric&quot;: &quot;app_order_complete_users&quot;
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80f0-aae4-eabdadfffcf5" class="toggle"><li><details open=""><summary><strong>CPM (App)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8034-b670-cf0e501e257e" class="bulleted-list"><li style="list-style-type:disc">(Cost (Channel) / Ad Impression (App)) *1000</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80d6-a62f-c60c3a9b2685" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;*&quot;, 
+	&quot;type&quot;: &quot;arithmetic&quot;, 
+	&quot;fields&quot;: [
+		{
+			&quot;fn&quot;: &quot;/&quot;, 
+			&quot;type&quot;: &quot;arithmetic&quot;, 
+			&quot;fields&quot;: [
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;cost_channel&quot;
+				}, 
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_ad_impression&quot;
+				}
+			]
+		}, 
+		{
+			&quot;type&quot;: &quot;constant&quot;, 
+			&quot;value&quot;: 1000
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8004-a5e8-ebee25d750ea" class="toggle"><li><details open=""><summary><strong>eCPM (App)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80b4-a1d8-eb5a72df1f5f" class="bulleted-list"><li style="list-style-type:disc">(Ad Impression Revenue (App) / Ad Impression (App)) *1000</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80e5-8124-fc596f0b4cc3" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;*&quot;, 
+	&quot;type&quot;: &quot;arithmetic&quot;, 
+	&quot;fields&quot;: [
+		{
+			&quot;fn&quot;: &quot;/&quot;, 
+			&quot;type&quot;: &quot;arithmetic&quot;, 
+			&quot;fields&quot;: [
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_ad_impression_revenue&quot;
+				},
+			  {
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_ad_impression&quot;
+				}
+			]
+		}, 
+		{
+			&quot;type&quot;: &quot;constant&quot;, 
+			&quot;value&quot;: 1000
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80b6-a61c-ef54bab13fef" class="toggle"><li><details open=""><summary><strong>Average Order Value - AOV (App)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8028-880b-df0564c51f9b" class="bulleted-list"><li style="list-style-type:disc">App Revenue / App Order Complete</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80f9-8a08-efe3dba93c4c" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;/&quot;,
+	&quot;type&quot;: &quot;arithmetic&quot;, 
+	&quot;fields&quot;: [
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;, 
+			&quot;metric&quot;: &quot;app_revenue&quot;
+		},
+		{&quot;type&quot;: &quot;fieldAccess&quot;,
+		 &quot;metric&quot;: &quot;app_order_complete&quot;
+		}
+	]
+}</code></pre></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-809e-ae86-da754ecc8543" class="">
+</p></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8004-b741-fc95870de9c4" class="toggle"><li><details open=""><summary><strong>Profit/Loss (Revenue - Cost) (App)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-808a-be27-effd8a78db54" class="bulleted-list"><li style="list-style-type:disc">Total Ad Revenue (App) - Cost (Channel)</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8054-93ae-fd942b285754" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;-&quot;,
+	&quot;type&quot;: &quot;arithmetic&quot;,
+	&quot;fields&quot;: [
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;, 
+			&quot;metric&quot;: &quot;app_ad_revenue&quot;
+		}, 
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;, 
+			&quot;metric&quot;: &quot;cost_channel&quot;
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80fa-90f1-cc88054c6af1" class="toggle"><li><details open=""><summary><strong>Profit % (App)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80d9-a9da-c435704e2f23" class="bulleted-list"><li style="list-style-type:disc">(Cost (Channel)) / Total Ad Revenue (App))*100</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-809f-99cc-f4c1eaebe779" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+ &quot;type&quot;: &quot;arithmetic&quot;,
+    &quot;fn&quot;: &quot;*&quot;,
+    &quot;fields&quot;: [
+        {
+            &quot;type&quot;: &quot;arithmetic&quot;,
+            &quot;fn&quot;: &quot;/&quot;,
+            &quot;fields&quot;: [
+                {
+                    &quot;type&quot;: &quot;fieldAccess&quot;,
+                    &quot;metric&quot;: &quot;cost_channel&quot;
+                },
+                {
+                    &quot;type&quot;: &quot;fieldAccess&quot;,
+                    &quot;metric&quot;: &quot;app_ad_revenue&quot;
+                }
+            ]
+        },
+        {
+			    &quot;type&quot;: &quot;constant&quot;, 
+					&quot;value&quot;: 100
+        }
+    ]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80cf-acc8-f758dcea8ae6" class="toggle"><li><details open=""><summary><strong>Cost per Sign-up (App)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-800c-9cde-c932663a1999" class="bulleted-list"><li style="list-style-type:disc">(<strong>Channel (Cost) / Sign-up (App)) - 1000</strong></li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80e2-b156-e0348be8d5f0" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+ &quot;type&quot;: &quot;arithmetic&quot;,
+    &quot;fn&quot;: &quot;-&quot;,
+    &quot;fields&quot;: [
+        {
+            &quot;type&quot;: &quot;arithmetic&quot;,
+            &quot;fn&quot;: &quot;/&quot;,
+            &quot;fields&quot;: [
+                {
+                    &quot;type&quot;: &quot;fieldAccess&quot;,
+                    &quot;metric&quot;: &quot;cost_channel&quot;
+                },
+                {
+                    &quot;type&quot;: &quot;fieldAccess&quot;,
+                    &quot;metric&quot;: &quot;app_sign_up&quot;
+                }
+            ]
+        },
+        {
+            &quot;type&quot;: &quot;constant&quot;,
+            &quot;value&quot;: 1000
+        }
+    ]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80c0-95e6-d74528a0b1ad" class="toggle"><li><details open=""><summary><strong>CR from Trial, % </strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80f5-9572-d6e0a959969c" class="bulleted-list"><li style="list-style-type:disc">(<code>trial_started (App)</code>/<code>trial_converted (App)</code>)*<code>100</code></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-800d-b294-c010de0964d9" class="bulleted-list"><li style="list-style-type:disc">Custom event 활용 예시 (metric_key: app_custom_<code>{custom_goal_category}</code>) </li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80e6-97e1-e4b29afc053c" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;*&quot;,
+	&quot;type&quot;: &quot;arithmetic&quot;,
+	&quot;fields&quot;: [
+		{
+			&quot;fn&quot;: &quot;/&quot;,
+			&quot;type&quot;: &quot;arithmetic&quot;, 
+			&quot;fields&quot;: [
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_custom_trial_started&quot;
+				},
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_custom_trial_converted&quot;
+				}
+			]
+		}, 
+		{
+			&quot;type&quot;: &quot;constant&quot;, 
+			&quot;value&quot;: 100
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80e6-985d-d1231fc7c3ac" class="toggle"><li><details open=""><summary><strong>CR to Purchase from Install, %</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8057-9e7b-f5148e787e67" class="bulleted-list"><li style="list-style-type:disc">(&#x27;<code>subscription_started (App)</code>&#x27;+&#x27;<code>trial_converted (App)</code>&#x27;)/&#x27;<code>Install (App)</code>&#x27;×<code>100</code></li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8073-8ac5-e4babd418ce8" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+  &quot;fn&quot;: &quot;*&quot;,
+  &quot;type&quot;: &quot;arithmetic&quot;,
+  &quot;fields&quot;: [
+    {
+      &quot;fn&quot;: &quot;/&quot;,
+      &quot;type&quot;: &quot;arithmetic&quot;,
+      &quot;fields&quot;: [
+        {
+          &quot;type&quot;: &quot;arithmetic&quot;,
+          &quot;fn&quot;: &quot;+&quot;,
+          &quot;fields&quot;: [
+            {
+              &quot;type&quot;: &quot;fieldAccess&quot;,
+              &quot;metric&quot;: &quot;app_custom_subscription_started&quot;
+            },
+            {
+              &quot;type&quot;: &quot;fieldAccess&quot;,
+              &quot;metric&quot;: &quot;app_custom_trial_converted&quot;
+            }
+          ]
+        },
+        {
+          &quot;type&quot;: &quot;fieldAccess&quot;,
+          &quot;metric&quot;: &quot;app_installs&quot;
+        }
+      ]
+    },
+    {
+      &quot;type&quot;: &quot;constant&quot;,
+      &quot;value&quot;: 100
+    }
+  ]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8031-b49e-e538cf3af80d" class="toggle"><li><details open=""><summary><strong>Parents, %</strong></summary><div style="display:contents" dir="auto"><p id="28ea69a8-2507-80bb-98fe-e5a25e7376bb" class="">&#x27;<code>parent_selected (App)</code>&#x27;÷&#x27;<code>Install (App)</code>&#x27;×<code>100</code></p></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-803f-bff7-c6529403b3d6" class="">app_custom_parent_selected</p></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-807e-88ab-c252cf7e452a" class="">app_installs</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80b9-b554-c23137b3c784" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;*&quot;,
+	&quot;type&quot;: &quot;arithmetic&quot;,
+	&quot;fields&quot;: [
+		{
+			&quot;fn&quot;: &quot;/&quot;,
+			&quot;type&quot;: &quot;arithmetic&quot;, 
+			&quot;fields&quot;: [
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_custom_parent_selected&quot;
+				},
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_installs&quot;
+				}
+			]
+		}, 
+		{
+			&quot;type&quot;: &quot;constant&quot;, 
+			&quot;value&quot;: 100
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80d2-b3ac-e3031435d6e2" class="toggle"><li><details open=""><summary><strong>ROI (App)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80dd-a752-c11b5b81126d" class="bulleted-list"><li style="list-style-type:disc"><code>ROI</code>=’<code>Revenue (App)</code>’÷’<code>Cost (Channel)</code>’</li></ul></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-8026-830a-c401aced7276" class="">app_revenue</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8065-861d-d6eb56f89a1c" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;/&quot;,
+	&quot;type&quot;: &quot;arithmetic&quot;,
+	&quot;fields&quot;: [
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;, 
+			&quot;metric&quot;: &quot;app_revenue&quot;
+		}, 
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;, 
+			&quot;metric&quot;: &quot;cost_channel&quot;
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80f0-b69b-f96f7a18fc32" class="toggle"><li><details open=""><summary><strong>Click-to-Install Rate</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8041-b003-f642651e01d1" class="bulleted-list"><li style="list-style-type:disc">Installs / Clicks * 100</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80ef-b244-c0061325ccca" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;*&quot;, 
+	&quot;type&quot;: &quot;arithmetic&quot;, 
+	&quot;fields&quot;: [
+		{
+			&quot;fn&quot;: &quot;/&quot;, 
+			&quot;type&quot;: &quot;arithmetic&quot;, 
+			&quot;fields&quot;: [
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_installs&quot;
+				}, 
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;clicks&quot;
+				}
+			]
+		}, 
+		{
+			&quot;type&quot;: &quot;constant&quot;, 
+			&quot;value&quot;: 100
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80d3-95b2-d20e6fb2bdfc" class="toggle"><li><details open=""><summary><strong>Click (Channel)-to-Install Rate</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80ea-9c5c-da8784034ed5" class="bulleted-list"><li style="list-style-type:disc">Installs / Clicks * 100</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-807e-9c31-ce58c062103b" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;*&quot;, 
+	&quot;type&quot;: &quot;arithmetic&quot;, 
+	&quot;fields&quot;: [
+		{
+			&quot;fn&quot;: &quot;/&quot;, 
+			&quot;type&quot;: &quot;arithmetic&quot;, 
+			&quot;fields&quot;: [
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_installs&quot;
+				}, 
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;clicks_channel&quot;
+				}
+			]
+		}, 
+		{
+			&quot;type&quot;: &quot;constant&quot;, 
+			&quot;value&quot;: 100
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8039-a7ec-ca1622766d84" class="toggle"><li><details open=""><summary><strong>Click-to-Unique Install Rate</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8037-884c-f79982c300cd" class="bulleted-list"><li style="list-style-type:disc">First Installs / Clicks * 100</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8029-b751-ee41190680f1" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;*&quot;, 
+	&quot;type&quot;: &quot;arithmetic&quot;, 
+	&quot;fields&quot;: [
+		{
+			&quot;fn&quot;: &quot;/&quot;, 
+			&quot;type&quot;: &quot;arithmetic&quot;, 
+			&quot;fields&quot;: [
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;app_first_installs&quot;
+				}, 
+				{
+					&quot;type&quot;: &quot;fieldAccess&quot;, 
+					&quot;metric&quot;: &quot;clicks&quot;
+				}
+			]
+		}, 
+		{
+			&quot;type&quot;: &quot;constant&quot;, 
+			&quot;value&quot;: 100
+		}
+	]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8053-8dd4-c866b7ee782e" class="toggle"><li><details open=""><summary><strong>Actual Revenue (App) (In-app purchase)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80ab-96cf-e38a4b5e7c49" class="bulleted-list"><li style="list-style-type:disc">Revenue (App) - Refund Amount (App)</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80f7-8bd7-e322e25801f6" class="code code-wrap"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;-&quot;,
+	&quot;type&quot;: &quot;arithmetic&quot;,
+	&quot;fields&quot;: [
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;,
+			&quot;metric&quot;: &quot;app_revenue&quot;
+			}, 
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;,
+			&quot;metric&quot;: &quot;app_refund_amount&quot;
+		}
+	]	}
+</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80d0-9194-d0faad8e185c" class="toggle"><li><details open=""><summary><strong>Number of Actual In-app Purchase</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80ee-8b31-db66ae716bb9" class="bulleted-list"><li style="list-style-type:disc">Order Complete (App) - Order Cancel (App)</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8052-8de2-fbcd76cdcc14" class="code code-wrap"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;fn&quot;: &quot;-&quot;,
+	&quot;type&quot;: &quot;arithmetic&quot;,
+	&quot;fields&quot;: [
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;,
+			&quot;metric&quot;: &quot;app_order_complete&quot;
+			}, 
+		{
+			&quot;type&quot;: &quot;fieldAccess&quot;,
+			&quot;metric&quot;: &quot;app_order_cancel&quot;
+		}
+	]	}
+</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80e4-911d-cd3d593c88d7" class="toggle"><li><details open=""><summary><strong>CPI (SKAN)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80e7-a906-dde4f0625175" class="bulleted-list"><li style="list-style-type:disc">Cost (Channel) / SKAN Installs (App) <div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80a1-af98-f00fd41ad860" class="bulleted-list"><li style="list-style-type:circle">참고) 해당 메트릭 포함 아래 4개는 강남언니 요청 메트릭</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80cf-8716-ce248d3ad1f7" class="code code-wrap"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">{
+  &quot;type&quot;: &quot;arithmetic&quot;,
+  &quot;fn&quot;: &quot;/&quot;,
+  &quot;fields&quot;: [
+    {
+      &quot;type&quot;: &quot;fieldAccess&quot;,
+      &quot;metric&quot;: &quot;cost_channel&quot;
+    },
+    {
+      &quot;type&quot;: &quot;fieldAccess&quot;,
+      &quot;metric&quot;: &quot;skan_installs&quot;
+    }
+  ]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80b1-a8e9-e8982f26dbaa" class="toggle"><li><details open=""><summary><strong>CAC (SKAN)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-801b-9ceb-e43bfd6f2f7f" class="bulleted-list"><li style="list-style-type:disc">Cost (Channel) / SKAN 회원가입 유저 수 (App)</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80ed-a52b-ec93129b9c47" class="code code-wrap"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">{
+  &quot;type&quot;: &quot;arithmetic&quot;,
+  &quot;fn&quot;: &quot;/&quot;,
+  &quot;fields&quot;: [
+    {
+      &quot;type&quot;: &quot;fieldAccess&quot;,
+      &quot;metric&quot;: &quot;cost_channel&quot;
+    },
+    {
+      &quot;type&quot;: &quot;fieldAccess&quot;,
+      &quot;metric&quot;: &quot;skan_sign_up&quot;
+    }
+  ]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-804b-8772-e5d06e328346" class="toggle"><li><details open=""><summary><strong>CPA (SKAN) </strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-80cd-ab4f-ebd87c85e621" class="bulleted-list"><li style="list-style-type:disc">Cost (Channel) / SKAN 구매 유저 수 (App)</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8045-be58-fd4e8a71131d" class="code code-wrap"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">{
+  &quot;type&quot;: &quot;arithmetic&quot;,
+  &quot;fn&quot;: &quot;/&quot;,
+  &quot;fields&quot;: [
+    {
+      &quot;type&quot;: &quot;fieldAccess&quot;,
+      &quot;metric&quot;: &quot;cost_channel&quot;
+    },
+    {
+      &quot;type&quot;: &quot;fieldAccess&quot;,
+      &quot;metric&quot;: &quot;skan_order_complete_user&quot;
+    }
+  ]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8072-b759-c80dde5ca7da" class="toggle"><li><details open=""><summary><strong>JPY Cost (Channel)</strong></summary><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8007-a848-ef768d1f34b7" class="bulleted-list"><li style="list-style-type:disc">Cost (Channel) * 0.10 (= / 10)</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8042-b96a-c48820676f2d" class="code code-wrap"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">{
+  &quot;type&quot;: &quot;arithmetic&quot;,
+  &quot;fn&quot;: &quot;/&quot;,
+  &quot;fields&quot;: [
+    {
+      &quot;type&quot;: &quot;fieldAccess&quot;,
+      &quot;metric&quot;: &quot;cost_channel&quot;
+    },
+    {
+      &quot;type&quot;: &quot;constant&quot;,
+      &quot;value&quot;: 10
+    }
+  ]
+}</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8025-93ca-db66ac329ced" class="toggle"><li><details open=""><summary><strong>Total CPP (All revenue events included)</strong></summary><div style="display:contents" dir="auto"><p id="28ea69a8-2507-809c-94b7-f7f0117d6e2b" class="">Cost (Channel) / SKAN Order complete + Custom purchase event + Order complete </p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-80d3-ba38-c91e8d2ec4ba" class="code code-wrap"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">{
+  &quot;fn&quot;: &quot;/&quot;,
+  &quot;type&quot;: &quot;arithmetic&quot;,
+  &quot;fields&quot;: [
+    {
+      &quot;type&quot;: &quot;fieldAccess&quot;,
+      &quot;metric&quot;: &quot;cost_channel&quot;
+    },
+    {
+      &quot;fn&quot;: &quot;+&quot;,
+      &quot;type&quot;: &quot;arithmetic&quot;,
+      &quot;fields&quot;: [
+        {
+          &quot;type&quot;: &quot;fieldAccess&quot;,
+          &quot;metric&quot;: &quot;app_custom_BP-Order-Complete&quot;
+        },
+        {
+          &quot;type&quot;: &quot;fieldAccess&quot;,
+          &quot;metric&quot;: &quot;skan_order_complete&quot;
+        },
+        {
+          &quot;type&quot;: &quot;fieldAccess&quot;,
+          &quot;metric&quot;: &quot;app_order_complete&quot;
+        }
+      ]
+    }
+  ]
+}
+</code></pre></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-80cd-b2c2-ff3111eff635" class="">
+</p></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="28ea69a8-2507-8013-8c76-d11514d5d7db" class="toggle"><li><details open=""><summary><strong>Cost per acquisition (CAC)</strong></summary><div style="display:contents" dir="auto"><p id="28ea69a8-2507-8007-9ac0-c7f7dee3cc30" class="">Cost (Channel) / (Order Complete (App) + Subscribe (App)) <br/>Order Complete (App): app_order_complete<br/>Subscribe (App): app_subscribe</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28ea69a8-2507-8074-9e82-d40391a52c38" class="code code-wrap"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">{
+  &quot;fn&quot;: &quot;/&quot;,
+  &quot;type&quot;: &quot;arithmetic&quot;,
+  &quot;fields&quot;: [
+    {
+      &quot;type&quot;: &quot;fieldAccess&quot;,
+      &quot;metric&quot;: &quot;cost_channel&quot;
+    },
+    {
+      &quot;fn&quot;: &quot;+&quot;,
+      &quot;type&quot;: &quot;arithmetic&quot;,
+      &quot;fields&quot;: [
+        {
+          &quot;type&quot;: &quot;fieldAccess&quot;,
+          &quot;metric&quot;: &quot;app_order_complete&quot;
+        },
+        {
+          &quot;type&quot;: &quot;fieldAccess&quot;,
+          &quot;metric&quot;: &quot;app_subscribe&quot;
+        }
+      ]
+    }
+  ]
+}
+</code></pre></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-8064-b4db-da40f1cb5509" class="">
+</p></div></details></li></ul></div><div style="display:contents" dir="auto"><p id="28ea69a8-2507-80d5-b896-f138dffea786" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

@@ -1,0 +1,153 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Build calculated-metric-backoffice
+      - name: Install & Build calculated-metric-backoffice
+        run: |
+          cd packages/calculated-metric-backoffice
+          npm ci
+          npm run build
+
+      # Build custom-channel-permission-backoffice
+      - name: Install & Build custom-channel-permission-backoffice
+        run: |
+          cd packages/custom-channel-permission-backoffice
+          npm ci
+          npm run build
+
+      # Build custom-deduplication-backoffice
+      - name: Install & Build custom-deduplication-backoffice
+        run: |
+          cd packages/custom-deduplication-backoffice
+          npm ci
+          npm run build
+
+      # Build event-usage-report
+      - name: Install & Build event-usage-report
+        run: |
+          cd packages/event-usage-report
+          npm ci
+          npm run build
+
+      # Build reactivated-attribution-redesign
+      - name: Install & Build reactivated-attribution-redesign
+        run: |
+          cd packages/reactivated-attribution-redesign
+          npm ci
+          npm run build
+
+      # Merge all dist folders
+      - name: Prepare deployment directory
+        run: |
+          mkdir -p deploy
+          cp -r packages/calculated-metric-backoffice/dist deploy/calculated-metric-backoffice
+          cp -r packages/custom-channel-permission-backoffice/dist deploy/custom-channel-permission-backoffice
+          cp -r packages/custom-deduplication-backoffice/dist deploy/custom-deduplication-backoffice
+          cp -r packages/event-usage-report/dist deploy/event-usage-report
+          cp -r packages/reactivated-attribution-redesign/dist deploy/reactivated-attribution-redesign
+
+      # Create index page
+      - name: Create index page
+        run: |
+          cat > deploy/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="ko">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>AB180 Backoffice Tools</title>
+            <style>
+              * { margin: 0; padding: 0; box-sizing: border-box; }
+              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; min-height: 100vh; padding: 40px 20px; }
+              .container { max-width: 800px; margin: 0 auto; }
+              h1 { font-size: 2rem; margin-bottom: 8px; color: #1a1a1a; }
+              .subtitle { color: #666; margin-bottom: 32px; }
+              .grid { display: grid; gap: 16px; }
+              a { text-decoration: none; }
+              .card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; }
+              .card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+              .card h2 { font-size: 1.1rem; color: #1a1a1a; margin-bottom: 8px; }
+              .card p { font-size: 0.9rem; color: #666; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h1>AB180 Backoffice Tools</h1>
+              <p class="subtitle">Internal tools for AB180 operations</p>
+              <div class="grid">
+                <a href="./calculated-metric-backoffice/">
+                  <div class="card">
+                    <h2>Calculated Metric Backoffice</h2>
+                    <p>계산된 지표 관리 도구</p>
+                  </div>
+                </a>
+                <a href="./custom-channel-permission-backoffice/">
+                  <div class="card">
+                    <h2>Custom Channel Permission Backoffice</h2>
+                    <p>채널 권한 커스텀 설정 관리</p>
+                  </div>
+                </a>
+                <a href="./custom-deduplication-backoffice/">
+                  <div class="card">
+                    <h2>Custom Deduplication Backoffice</h2>
+                    <p>이벤트 중복 제거 설정 관리</p>
+                  </div>
+                </a>
+                <a href="./event-usage-report/">
+                  <div class="card">
+                    <h2>Event Usage Report</h2>
+                    <p>이벤트 사용량 리포트</p>
+                  </div>
+                </a>
+                <a href="./reactivated-attribution-redesign/">
+                  <div class="card">
+                    <h2>Reactivated Attribution Redesign</h2>
+                    <p>재참여 어트리뷰션 리디자인</p>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </body>
+          </html>
+          EOF
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./deploy
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

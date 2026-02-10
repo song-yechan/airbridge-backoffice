@@ -1,0 +1,1051 @@
+# Custom Channel Permission Backoffice 설정 페이지 명세서
+
+## 1. 페이지 개요
+
+### 목적
+대행사(Agency)의 커스텀 채널 캠페인 권한을 설정하는 관리 도구입니다. 특정 캠페인 데이터에만 접근할 수 있도록 필터 조건을 설정하여, 대행사가 자신의 캠페인만 볼 수 있도록 제한합니다.
+
+### 주요 기능
+1. **App 검색**: App ID 또는 App Name으로 앱 검색
+2. **대행사 선택**: 검색된 앱에 연결된 대행사 목록에서 권한 설정 대상 선택
+3. **현재 권한 조회**: 선택된 대행사의 현재 권한 설정 JSON 확인 (펼침/접힘)
+4. **Custom Channel 관리**: 커스텀 채널 추가/삭제
+5. **Data Filter 관리**: 채널별 캠페인 필터 조건 추가/삭제
+6. **권한 저장**: 변경사항 적용 (Apply) 및 초기화 (Reset)
+
+### 타겟 사용자
+- Airbridge 내부 운영팀
+- 고객 성공 매니저 (CSM)
+- IAM 접근 관리 담당자
+
+### 접근 권한
+
+| 항목 | 규칙 |
+|------|------|
+| 접근 경로 | 백오피스 내부 페이지 (HomeNav 드롭다운으로 진입) |
+| 인증 | 백오피스 공통 인증 (별도 페이지 레벨 권한 없음) |
+| 권한 범위 | 인증된 사용자는 모든 App/대행사의 권한에 대해 설정 가능 |
+| 감사 로그 | 현재 미구현 (향후 권한 변경 이력 추적 필요) |
+
+---
+
+## 2. 정책 사항
+
+### 입력 제한 및 유효성 검사
+
+#### App 검색
+| 항목 | 규칙 |
+|------|------|
+| 검색 타입 | App ID 또는 App Name 선택 |
+| App ID 형식 | 예: `app_12345` |
+| App Name | 부분 일치 검색 지원 |
+| 검증 시점 | 검색 버튼 클릭 시 (또는 Enter) |
+
+#### Custom Channel 이름
+| 항목 | 규칙 |
+|------|------|
+| 필수 여부 | 필수 |
+| 허용 문자 | 영문, 숫자, 밑줄(_), 하이픈(-) |
+| 정규식 | `/^[a-zA-Z0-9_-]+$/` |
+| 중복 검사 | 동일 대행사 내 중복 불가 |
+| 검증 시점 | Dialog 내 "추가" 버튼 클릭 시 (형식 + 중복 동시 검증) |
+| 예시 | `Naver_Brand`, `Kakao_Performance`, `TikTok-Growth` |
+
+#### Data Filter
+| 항목 | 규칙 |
+|------|------|
+| 필터 타입 | `startswith`, `endswith`, `is`, `is_not` 중 택1 |
+| 필터 값 | 최소 1개 이상 필수 |
+| 복수 값 | OR 조건으로 적용 |
+| 필드 | `campaign` 고정 |
+| 검증 시점 | Dialog 내 "추가" 버튼 클릭 시 (값 누락, 중복 검증) |
+
+### 비즈니스 로직 규칙
+
+#### Filter Type 설명
+| 타입 | 설명 | 예시 |
+|------|------|------|
+| `startswith` | 캠페인명이 특정 문자열로 시작 | `summer_` → summer_sale, summer_event |
+| `endswith` | 캠페인명이 특정 문자열로 끝남 | `_2024` → spring_2024, fall_2024 |
+| `is` | 캠페인명이 정확히 일치 | `main_campaign` → 정확히 main_campaign만 |
+| `is_not` | 캠페인명이 일치하지 않음 | `test` → test 제외 모든 캠페인 |
+
+#### 권한 데이터 구조
+```typescript
+interface Permission {
+  integration: {
+    integratedChannels: string[];           // 연동 채널 목록
+    integratedChannelDataFilters: DataFilter[];
+    customChannels: string[];               // 커스텀 채널 목록
+    customChannelDataFilters: CustomChannelDataFilter[];
+    unattributedChannel: boolean;           // 미귀인 채널 허용
+    unattributedFilter: DataFilter | null;
+  };
+  dataRestriction?: {
+    eventCategories: string[];              // 접근 가능 이벤트 카테고리
+  };
+}
+```
+
+### 에러 처리 정책
+
+| 에러 상황 | 메시지 | 처리 방식 | 발생 시점 |
+|-----------|--------|-----------|-----------|
+| 검색어 미입력 | "검색어를 입력해주세요" | Alert 에러 | 검색 버튼 클릭 시 |
+| App ID 없음 | "해당 App ID를 찾을 수 없습니다" | Alert 에러 | API 응답 시 |
+| 검색 결과 없음 | "검색 결과가 없습니다" | Alert 에러 | API 응답 시 |
+| 앱 검색 실패 | "앱 검색 중 오류가 발생했습니다" | Alert 에러 | API 응답 시 |
+| 대행사 목록 로드 실패 | "대행사 목록을 불러오는데 실패했습니다" | Toast 에러 | API 응답 시 |
+| 권한 정보 없음 | "권한 정보를 찾을 수 없습니다" | Toast 에러 | API 응답 시 |
+| 권한 로드 실패 | "권한 정보를 불러오는데 실패했습니다" | Toast 에러 | API 응답 시 |
+| 채널명 미입력 | "채널 이름을 입력해주세요" | Alert 에러 | Dialog "추가" 클릭 시 |
+| 채널명 중복 | "이미 존재하는 채널 이름입니다" | Alert 에러 | Dialog "추가" 클릭 시 |
+| 채널명 형식 오류 | "채널 이름은 영문, 숫자, 밑줄(_), 하이픈(-)만 사용할 수 있습니다" | Alert 에러 | Dialog "추가" 클릭 시 |
+| 필터 값 미입력 | "값을 입력해주세요" | Alert 에러 | 필터 값 "추가" 클릭 시 |
+| 필터 값 중복 | "이미 추가된 값입니다" | Alert 에러 | 필터 값 "추가" 클릭 시 |
+| 필터 값 누락 | "최소 하나의 값을 추가해주세요" | Alert 에러 | Dialog "추가" 클릭 시 |
+| 대행사 미선택 | "대행사가 선택되지 않았습니다" | API 에러 | Apply 버튼 클릭 시 |
+| 저장 실패 | "권한 업데이트에 실패했습니다" / "Failed to update permission..." | Toast 에러 | API 응답 시 |
+| API 네트워크 에러 | "서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요." | Toast 에러 | API 호출 실패 시 |
+| API 서버 에러 (5xx) | "서버 오류가 발생했습니다. 관리자에게 문의해주세요." | Toast 에러 | API 응답 시 |
+
+### 주의사항
+- **Apply** 버튼을 클릭하기 전까지 변경사항이 저장되지 않습니다
+- 대시보드에서 대행사 권한을 한 번 이상 수정해야 백오피스로 권한 설정이 가능합니다
+- 문제 발생 시 `#qna-iam-access-management`에 문의
+
+---
+
+## 3. 화면 구조 (ASCII Wireframe)
+
+### 전체 레이아웃
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ [🏠 Select: Page Navigation      ▼]                                         │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  Custom Channel Permission 설정                                             │
+│  대행사별 커스텀 채널 캠페인 권한을 관리합니다                              │
+│                                                                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ 📖 사용 가이드                                                      │   │
+│  ├─────────────────────────────────────────────────────────────────────┤   │
+│  │ ▶ ❓ 이 도구는 무엇인가요?                                          │   │
+│  │ ▶ 💡 사용 방법                                                      │   │
+│  │ ▶ 📖 필터 타입 설명                                                 │   │
+│  │ ▶ ⚠️ 주의사항                                                       │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│  ────────────────────────────────────────────────────────────────────────   │
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ App 검색                                                            │   │
+│  ├─────────────────────────────────────────────────────────────────────┤   │
+│  │ (App 검색 영역 - 아래 상세 참조)                                    │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ 🏢 대행사 선택                                                      │   │
+│  ├─────────────────────────────────────────────────────────────────────┤   │
+│  │ (대행사 선택 영역 - 아래 상세 참조)                                 │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ 📄 현재 권한 설정                           [펼치기 ▶] / [접기 ▼]   │   │
+│  ├─────────────────────────────────────────────────────────────────────┤   │
+│  │ (JSON 뷰어 - 펼침 시 표시)                                          │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ 📚 Custom Channel 권한                        [+ 채널 추가]         │   │
+│  ├─────────────────────────────────────────────────────────────────────┤   │
+│  │ (채널 권한 목록 - 아래 상세 참조)                                   │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                      ┌────────────┐  ┌────────────┐        │
+│                                      │  ↻ Reset   │  │   Apply    │ ◄ Sticky│
+│                                      └────────────┘  └────────────┘        │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+**레이아웃 제약**
+- 콘텐츠 최대 너비: `920px`, 중앙 정렬
+- 좌우 패딩: `24px`
+- Action Buttons: 하단 Sticky
+
+### App 검색 섹션 상세
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ App 검색                                                                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌──────────────┐ ┌────────────────────────────────────────┐ ┌──────────┐  │
+│  │ App ID    ▼ │ │ app_12345                              │ │ 🔍 검색  │  │
+│  └──────────────┘ └────────────────────────────────────────┘ └──────────┘  │
+│   (또는 App Name)  (placeholder: "app_12345" 또는 "앱 이름으로 검색...")    │
+│                                                                             │
+│  (에러 시)                                                                  │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ ⚠ 해당 App ID를 찾을 수 없습니다                                    │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│  (검색 결과가 여러 개일 때)                                                 │
+│  3개의 앱을 찾았습니다. 선택해주세요:                                       │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ [🖼] E-Commerce App                                                  │   │
+│  │     app_12345                                                       │   │
+│  ├─────────────────────────────────────────────────────────────────────┤   │
+│  │ [🖼] Travel Booking App                                              │   │
+│  │     app_67890                                                       │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│  (선택된 앱)                                                                │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ [🖼] E-Commerce App                                                  │   │
+│  │     app_12345 · Asia/Seoul                                          │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 대행사 선택 섹션 상세
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🏢 대행사 선택                                                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  권한을 설정할 대행사                                                       │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │ 대행사를 선택해주세요                                              ▼ │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                                                             │
+│  (드롭다운 펼침 시)                                                         │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │ Digital Marketing Agency                                              │ │
+│  │ User Group ID: 101                                                    │ │
+│  ├───────────────────────────────────────────────────────────────────────┤ │
+│  │ Performance Partners                                                  │ │
+│  │ User Group ID: 102                                                    │ │
+│  ├───────────────────────────────────────────────────────────────────────┤ │
+│  │ Growth Hackers Inc                                                    │ │
+│  │ User Group ID: 103                                                    │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                                                             │
+│  (대행사가 없을 때)                                                         │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │ ⚠ 이 앱에 연결된 대행사가 없습니다.                                   │ │
+│  │   먼저 대시보드에서 대행사를 추가해주세요.                            │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 현재 권한 설정 섹션 상세
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📄 현재 권한 설정                                   [▶ 펼치기] / [▼ 접기]   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  (펼침 시)                                                                  │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │ {                                                                     │ │
+│  │   "integration": {                                                    │ │
+│  │     "integratedChannels": ["Google Ads", "Facebook Ads", "Kakao"],   │ │
+│  │     "integratedChannelDataFilters": [],                               │ │
+│  │     "customChannels": ["Naver_Brand", "Kakao_Performance"],          │ │
+│  │     "customChannelDataFilters": [                                     │ │
+│  │       {                                                               │ │
+│  │         "name": "Naver_Brand",                                        │ │
+│  │         "filter": {                                                   │ │
+│  │           "type": "startswith",                                       │ │
+│  │           "values": ["naver_brand_", "naver_br_"],                   │ │
+│  │           "field": "campaign"                                         │ │
+│  │         }                                                             │ │
+│  │       },                                                              │ │
+│  │       ...                                                             │ │
+│  │     ],                                                                │ │
+│  │     "unattributedChannel": false,                                     │ │
+│  │     "unattributedFilter": null                                        │ │
+│  │   },                                                                  │ │
+│  │   "dataRestriction": {                                                │ │
+│  │     "eventCategories": ["purchase", "signup", "view_item"]           │ │
+│  │   }                                                                   │ │
+│  │ }                                                                     │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│    ◄── ScrollArea (최대 높이 300px)                                        │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Custom Channel 권한 섹션 상세
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📚 Custom Channel 권한                               [+ 채널 추가]          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  (앱/대행사 미선택 시)                                                      │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │ ℹ 앱과 대행사를 선택하면 권한을 수정할 수 있습니다.                   │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                                                             │
+│  (채널이 없을 때)                                                           │
+│                        📚                                                   │
+│                    커스텀 채널이 없습니다                                   │
+│             "채널 추가" 버튼을 클릭하여 새로운 채널을 만들어보세요          │
+│                                                                             │
+│  (채널이 있을 때)                                                           │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │ # `Naver_Brand`                        [+ 필터 추가]  [🗑]            │ │
+│  ├───────────────────────────────────────────────────────────────────────┤ │
+│  │ ┌─────────────────────────────────────────────────────────────────┐   │ │
+│  │ │ [시작] `naver_brand_` `naver_br_`                         [✕]  │   │ │
+│  │ └─────────────────────────────────────────────────────────────────┘   │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                                                             │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │ # `Kakao_Performance`                  [+ 필터 추가]  [🗑]            │ │
+│  ├───────────────────────────────────────────────────────────────────────┤ │
+│  │ ┌─────────────────────────────────────────────────────────────────┐   │ │
+│  │ │ [일치] `kakao_main_campaign_2024` `kakao_retargeting_q1`  [✕]  │   │ │
+│  │ └─────────────────────────────────────────────────────────────────┘   │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                                                             │
+│  (필터가 없는 채널)                                                         │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │ # `New_Channel`                        [+ 필터 추가]  [🗑]            │ │
+│  ├───────────────────────────────────────────────────────────────────────┤ │
+│  │                          🔍                                           │ │
+│  │                      필터가 없습니다                                  │ │
+│  │          필터를 추가하면 특정 캠페인만 볼 수 있도록 제한됩니다        │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 채널 추가 Dialog
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│  Custom Channel 추가                                                        │
+│  새로운 커스텀 채널을 추가합니다. 채널을 추가한 후                          │
+│  Data Filter를 설정해주세요.                                                │
+│                                                                             │
+│  채널 이름                                                                  │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │ 예: Naver_Brand, Kakao_Performance                                    │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│  영문, 숫자, 밑줄(_), 하이픈(-)만 사용 가능합니다                           │
+│                                                                             │
+│  (에러 시)                                                                  │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │ ⚠ 이미 존재하는 채널 이름입니다                                       │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                                                             │
+│                              ┌────────────┐  ┌────────────┐                │
+│                              │   취소     │  │   추가     │                │
+│                              └────────────┘  └────────────┘                │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 필터 추가 Dialog
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│  Data Filter 추가                                                           │
+│  `Naver_Brand` 채널에 캠페인 필터를 추가합니다.                             │
+│                                                                             │
+│  필터 타입                                                                  │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │ startswith                                                          ▼ │ │
+│  │ 캠페인명이 특정 문자열로 시작                                         │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                                                             │
+│  (드롭다운 펼침 시)                                                         │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │ startswith                                                            │ │
+│  │ 캠페인명이 특정 문자열로 시작                                         │ │
+│  ├───────────────────────────────────────────────────────────────────────┤ │
+│  │ endswith                                                              │ │
+│  │ 캠페인명이 특정 문자열로 끝남                                         │ │
+│  ├───────────────────────────────────────────────────────────────────────┤ │
+│  │ is                                                                    │ │
+│  │ 캠페인명이 정확히 일치                                                │ │
+│  ├───────────────────────────────────────────────────────────────────────┤ │
+│  │ is_not                                                                │ │
+│  │ 캠페인명이 일치하지 않음                                              │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                                                             │
+│  필터 값                                                                    │
+│  ┌───────────────────────────────────────────────────────┐ ┌─────┐        │
+│  │ 값을 입력하고 Enter 또는 추가 버튼                     │ │추가 │        │
+│  └───────────────────────────────────────────────────────┘ └─────┘        │
+│  여러 개의 값을 추가할 수 있습니다. OR 조건으로 적용됩니다.                │
+│                                                                             │
+│  추가된 값                                                                  │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │ `naver_brand_` [✕]   `naver_br_` [✕]                                  │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                                                             │
+│                              ┌────────────┐  ┌────────────┐                │
+│                              │   취소     │  │   추가     │                │
+│                              └────────────┘  └────────────┘                │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 채널 삭제 확인 Dialog
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                 │
+│  채널을 삭제하시겠습니까?                                       │
+│                                                                 │
+│  `Naver_Brand` 채널과 연결된 모든 필터가 삭제됩니다.           │
+│  이 작업은 Apply 버튼을 클릭해야 최종 적용됩니다.              │
+│                                                                 │
+│                          ┌────────────┐  ┌────────────┐        │
+│                          │   취소     │  │   삭제     │        │
+│                          └────────────┘  └────────────┘        │
+│                                           (destructive)        │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Apply 확인 Dialog
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                 │
+│  변경사항을 적용하시겠습니까?                                   │
+│                                                                 │
+│  대행사의 커스텀 채널 권한이 업데이트됩니다.                    │
+│  변경 후 대행사는 새로운 권한 설정에 따라 데이터에              │
+│  접근하게 됩니다.                                               │
+│                                                                 │
+│                          ┌────────────┐  ┌────────────┐        │
+│                          │   취소     │  │   적용     │        │
+│                          └────────────┘  └────────────┘        │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 상태별 화면 변화
+
+#### 로딩 상태
+- App 검색 중: 검색 버튼 비활성화 + Loader2 스피너, 입력 필드 disabled
+- 대행사 목록 로딩: Skeleton 표시
+- 권한 로딩: Skeleton 표시
+- 저장 중: Apply 버튼 비활성화 + Loader2 스피너, Reset 버튼도 비활성화
+
+#### 에러 상태
+- 검색 에러: Alert variant="destructive" 표시
+- Dialog 내 에러: Alert variant="destructive" 표시
+- 저장 실패: Toast 에러 (5초 후 자동 사라짐)
+- API 네트워크 에러: Toast 에러 (5초 후 자동 사라짐)
+
+#### 빈 상태
+- 대행사 없음: Alert 메시지
+- 채널 없음: 빈 상태 일러스트 + 안내 문구
+- 필터 없음: 빈 상태 아이콘 + 안내 문구
+
+#### 성공 상태
+- 저장 성공: "권한이 성공적으로 업데이트되었습니다" Toast 성공 + 현재 권한 JSON 갱신 (최신 데이터 반영)
+- Reset: "변경사항이 초기화되었습니다" Toast info + 폼 상태가 originalPermission으로 복원
+
+---
+
+## 4. 인터랙션 상세
+
+### 버튼별 동작 정의
+
+| 버튼/액션 | 위치 | 트리거 | 동작 | 완료 후 |
+|-----------|------|--------|------|---------|
+| 검색 | App 검색 섹션 우측 | 클릭 또는 Enter | 검색 타입에 따라 App ID/Name 검색 API 호출 | 검색 결과 표시 (단일: 앱 자동 선택, 복수: 목록 노출) |
+| 앱 선택 | 검색 결과 목록 | 클릭 | 선택된 앱 정보 표시 + 대행사 목록 API 호출 | 대행사 드롭다운 활성화 |
+| 대행사 선택 | 대행사 드롭다운 | 선택 변경 | 선택한 대행사의 권한 조회 API 호출 | 현재 권한 JSON 로드 + 채널 목록 로드 |
+| 채널 추가 [+ 채널 추가] | Custom Channel 섹션 우상단 | 클릭 | AddChannelDialog 열기 | -- |
+| Dialog - 채널 추가 | AddChannelDialog 하단 | 클릭 | 채널명 유효성 검증 (형식 + 중복) → 채널 추가 | 성공 시 Dialog 닫힘 + 채널 목록에 추가 |
+| Dialog - 채널 취소 | AddChannelDialog 하단 | 클릭 | Dialog 닫힘 + 입력 초기화 | -- |
+| 필터 추가 [+ 필터 추가] | 각 채널 카드 우상단 | 클릭 | AddFilterDialog 열기 (해당 채널명 전달) | -- |
+| Dialog - 필터 추가 | AddFilterDialog 하단 | 클릭 | 필터 값 유효성 검증 (최소 1개) → 필터 추가 | 성공 시 Dialog 닫힘 + 해당 채널에 필터 추가 |
+| Dialog - 필터 취소 | AddFilterDialog 하단 | 클릭 | Dialog 닫힘 + 입력 초기화 | -- |
+| 필터 값 추가 | AddFilterDialog 내 필터 값 입력 | 클릭 또는 Enter | 값 유효성 검증 (빈 값, 중복) → 값 목록에 추가 | 입력 필드 초기화 |
+| 필터 값 삭제 [✕] | AddFilterDialog 내 값 배지 | 클릭 | 해당 값을 목록에서 제거 | -- |
+| 필터 삭제 [✕] | 각 필터 아이템 우측 | 클릭 | 해당 필터를 채널에서 제거 (아직 저장 안됨) | hasChanges 상태 갱신 |
+| 채널 삭제 [🗑] | 각 채널 카드 우상단 | 클릭 | 채널 삭제 확인 AlertDialog 열기 | -- |
+| Dialog - 채널 삭제 확인 | 삭제 확인 Dialog 하단 | 클릭 | 채널 + 연결된 필터 모두 제거 (아직 저장 안됨) | Dialog 닫힘 + 채널 목록에서 제거 |
+| Dialog - 채널 삭제 취소 | 삭제 확인 Dialog 하단 | 클릭 | Dialog 닫힘 | -- |
+| Apply | Action Buttons (하단 Sticky) | 클릭 | Apply 확인 AlertDialog 열기 | -- |
+| Dialog - Apply 확인 (적용) | Apply 확인 Dialog | 클릭 | 권한 업데이트 API 호출 (PUT) | 성공 시 Toast + 현재 권한 JSON 갱신 |
+| Dialog - Apply 취소 | Apply 확인 Dialog | 클릭 | Dialog 닫힘 | -- |
+| Reset | Action Buttons (하단 Sticky) | 클릭 | 모든 변경사항을 originalPermission 상태로 복원 | "변경사항이 초기화되었습니다" Toast info |
+
+### 인터랙션 타이밍
+
+| 인터랙션 | 방식 | 값 |
+|----------|------|-----|
+| App 검색 | 버튼 클릭 또는 Enter | 즉시 API 호출 (디바운스 없음) |
+| Toast 자동 닫힘 | 표시 후 | 5초 |
+| 버튼 로딩 상태 | API 호출 중 | 호출 시작~응답까지 비활성화 + 스피너 |
+| Dialog 애니메이션 | 열기/닫기 | Dialog 기본 애니메이션 |
+| Collapsible 애니메이션 (현재 권한 설정) | 클릭 토글 | 애니메이션 200ms (Collapsible 기본) |
+| 가이드 아코디언 | 클릭 토글 | 애니메이션 200ms |
+
+### 키보드 접근성
+
+| 키 | 동작 |
+|----|------|
+| Tab | 폼 필드 간 포커스 이동 (검색 타입 → 검색어 → 검색 버튼 → 대행사 드롭다운 → ...) |
+| Enter | 검색어 입력 후 → 검색 실행, Dialog 내 입력 필드에서 → 값 추가 |
+| Escape | 열려 있는 Dialog 닫기 |
+
+---
+
+## 5. 컴포넌트 상세
+
+### 계층 구조
+
+```
+App
+├── TooltipProvider
+├── HomeNav                    // 페이지 네비게이션 드롭다운
+├── PageHeader                 // 페이지 제목 및 설명
+├── PermissionGuide            // 사용 가이드 아코디언
+│   └── Accordion
+│       ├── AccordionItem (이 도구는 무엇인가요?)
+│       ├── AccordionItem (사용 방법)
+│       ├── AccordionItem (필터 타입 설명)
+│       └── AccordionItem (주의사항)
+├── Separator
+├── AppSearchSection           // App 검색
+│   ├── Select (검색 타입)
+│   ├── Input (검색어)
+│   ├── Button (검색)
+│   └── (선택된 앱 정보 표시)
+├── AgencySelector             // 대행사 선택
+│   └── Select (대행사 목록)
+├── CurrentPermissionView      // 현재 권한 JSON 뷰어
+│   └── Collapsible
+│       └── ScrollArea (JSON 표시)
+├── ChannelPermissionList      // Custom Channel 권한 목록
+│   ├── AddChannelDialog
+│   └── ChannelPermissionCard[]
+│       ├── AddFilterDialog
+│       ├── DataFilterItem[]
+│       └── (삭제 AlertDialog)
+├── ActionButtons              // Apply/Reset 버튼
+│   └── AlertDialog (Apply 확인)
+└── Toaster
+```
+
+### 각 컴포넌트별 Props 및 역할
+
+#### AppSearchSection
+| 역할 | App 검색 UI |
+|------|------------|
+| Props | onAppFound: (app: AppInfo) => void |
+| Props | searchApp: (query, type) => Promise<AppInfo \| AppInfo[] \| null> |
+| Props | isLoading?: boolean |
+| State | searchType, searchQuery, searchResults, searching, error, selectedApp |
+
+#### AgencySelector
+| 역할 | 대행사 선택 드롭다운 |
+|------|---------------------|
+| Props | agencies: Agency[] |
+| Props | selectedAgencyId: string \| null |
+| Props | onSelectAgency: (agencyId: string) => void |
+| Props | isLoading?: boolean |
+| Props | disabled?: boolean |
+
+#### CurrentPermissionView
+| 역할 | 현재 권한 JSON 뷰어 (펼침/접힘) |
+|------|-------------------------------|
+| Props | permission: Permission \| null |
+| Props | isLoading?: boolean |
+| State | isOpen |
+
+#### ChannelPermissionList
+| 역할 | Custom Channel 권한 목록 컨테이너 |
+|------|----------------------------------|
+| Props | customChannels: string[] |
+| Props | customChannelDataFilters: CustomChannelDataFilter[] |
+| Props | onAddChannel: (channelName: string) => void |
+| Props | onDeleteChannel: (channelName: string) => void |
+| Props | onAddFilter: (channelName: string, filter: DataFilter) => void |
+| Props | onDeleteFilter: (channelName: string, filterIndex: number) => void |
+| Props | isLoading?: boolean |
+| Props | disabled?: boolean |
+
+#### ChannelPermissionCard
+| 역할 | 개별 채널 카드 (필터 목록 포함) |
+|------|-------------------------------|
+| Props | channelName: string |
+| Props | filters: CustomChannelDataFilter[] |
+| Props | onDeleteChannel: () => void |
+| Props | onAddFilter: (filter: DataFilter) => void |
+| Props | onDeleteFilter: (filterIndex: number) => void |
+
+#### AddChannelDialog
+| 역할 | 채널 추가 다이얼로그 |
+|------|---------------------|
+| Props | existingChannels: string[] |
+| Props | onAdd: (channelName: string) => void |
+| Props | trigger?: React.ReactNode |
+| State | open, channelName, error |
+
+#### AddFilterDialog
+| 역할 | 필터 추가 다이얼로그 |
+|------|---------------------|
+| Props | channelName: string |
+| Props | onAdd: (filter: DataFilter) => void |
+| Props | trigger?: React.ReactNode |
+| State | open, filterType, currentValue, values, error |
+
+#### DataFilterItem
+| 역할 | 필터 아이템 표시 |
+|------|-----------------|
+| Props | filter: DataFilter |
+| Props | onDelete?: () => void |
+| Props | readonly?: boolean |
+
+#### ActionButtons
+| 역할 | Apply/Reset 버튼 (Sticky 하단) |
+|------|------------------------------|
+| Props | hasChanges: boolean |
+| Props | isSubmitting: boolean |
+| Props | onApply: () => void |
+| Props | onReset: () => void |
+| Props | disabled?: boolean |
+
+#### usePermissionForm (Hook)
+| 역할 | 권한 폼 상태 관리 |
+|------|-----------------|
+| Returns | permission, originalPermission, hasChanges, isSubmitting, error |
+| Returns | initializeForm, resetForm, clearForm |
+| Returns | handleAddChannel, handleDeleteChannel |
+| Returns | handleAddFilter, handleDeleteFilter |
+| Returns | handleSubmit |
+
+---
+
+## 6. 사용자 플로우
+
+### 시나리오 1: 커스텀 채널 권한 설정
+
+1. App 검색 타입 선택 (App ID / App Name)
+2. 검색어 입력 후 Enter 또는 검색 버튼 클릭
+3. (여러 결과 시) 앱 선택
+4. 대행사 드롭다운에서 대행사 선택
+5. "현재 권한 설정" 펼쳐서 기존 설정 확인 (선택 사항)
+6. "[+ 채널 추가]" 클릭
+7. 채널 이름 입력 후 "추가"
+8. 추가된 채널에서 "[+ 필터 추가]" 클릭
+9. 필터 타입 선택 (startswith, endswith, is, is_not)
+10. 필터 값 입력 후 Enter 또는 "추가" (여러 개 가능)
+11. "추가" 버튼 클릭하여 필터 저장
+12. "Apply" 버튼 클릭
+13. 확인 다이얼로그에서 "적용" 클릭
+14. 성공 토스트 확인
+
+### 시나리오 2: 기존 필터 삭제
+
+1. 앱 검색 및 대행사 선택
+2. 삭제할 필터의 [✕] 버튼 클릭
+3. (변경사항 반영됨 - 아직 저장 안됨)
+4. "Apply" 버튼 클릭하여 저장
+
+### 시나리오 3: 채널 삭제
+
+1. 앱 검색 및 대행사 선택
+2. 삭제할 채널의 [🗑] 버튼 클릭
+3. 확인 다이얼로그에서 "삭제" 클릭
+4. (채널 및 연결된 필터 모두 제거됨 - 아직 저장 안됨)
+5. "Apply" 버튼 클릭하여 저장
+
+### 시나리오 4: 변경사항 취소
+
+1. 권한 수정 중
+2. "Reset" 버튼 클릭
+3. 모든 변경사항이 초기 상태로 복원됨
+4. "변경사항이 초기화되었습니다" 토스트 확인
+
+---
+
+## 7. API 명세
+
+### 데이터 모델
+
+#### AppInfo
+```typescript
+interface AppInfo {
+  id: string;        // "app_12345"
+  name: string;      // "E-Commerce App"
+  timezone: string;  // "Asia/Seoul"
+  iconUrl?: string;
+}
+```
+
+#### Agency
+```typescript
+interface Agency {
+  id: string;         // "agency_1"
+  name: string;       // "Digital Marketing Agency"
+  userGroupId: number; // 101
+}
+```
+
+#### Permission
+```typescript
+interface Permission {
+  integration: {
+    integratedChannels: string[];
+    integratedChannelDataFilters: DataFilter[];
+    customChannels: string[];
+    customChannelDataFilters: CustomChannelDataFilter[];
+    unattributedChannel: boolean;
+    unattributedFilter: DataFilter | null;
+  };
+  dataRestriction?: {
+    eventCategories: string[];
+  };
+}
+```
+
+#### DataFilter
+```typescript
+type FilterType = "startswith" | "endswith" | "is" | "is_not";
+
+interface DataFilter {
+  type: FilterType;
+  values: string[];
+  field: "campaign";
+}
+
+interface CustomChannelDataFilter {
+  name: string;      // 채널명
+  filter: DataFilter;
+}
+```
+
+### API 엔드포인트
+
+#### App ID로 검색
+
+```
+GET /api/apps?id={appId}
+```
+
+| 항목 | 내용 |
+|------|------|
+| Query Param | id: string (App ID, 예: `app_12345`) |
+| 호출 시점 | App 검색에서 검색 타입 "App ID" 선택 후 검색 버튼 클릭 시 |
+
+**Response 200**
+```json
+{
+  "data": {
+    "id": "app_12345",
+    "name": "E-Commerce App",
+    "timezone": "Asia/Seoul",
+    "iconUrl": "https://cdn.example.com/icon.png"
+  }
+}
+```
+
+**Response 404** -- App ID 없음
+```json
+{
+  "error": {
+    "code": "APP_NOT_FOUND",
+    "message": "App not found"
+  }
+}
+```
+
+---
+
+#### App Name으로 검색
+
+```
+GET /api/apps?name={query}
+```
+
+| 항목 | 내용 |
+|------|------|
+| Query Param | name: string (검색어, 부분 일치) |
+| 호출 시점 | App 검색에서 검색 타입 "App Name" 선택 후 검색 버튼 클릭 시 |
+
+**Response 200**
+```json
+{
+  "data": [
+    {
+      "id": "app_12345",
+      "name": "E-Commerce App",
+      "timezone": "Asia/Seoul",
+      "iconUrl": "https://cdn.example.com/icon.png"
+    },
+    {
+      "id": "app_67890",
+      "name": "Travel Booking App",
+      "timezone": "America/New_York",
+      "iconUrl": null
+    }
+  ]
+}
+```
+
+**Response 200** -- 검색 결과 없음
+```json
+{
+  "data": []
+}
+```
+
+---
+
+#### 대행사 목록 조회
+
+```
+GET /api/apps/{appId}/agencies
+```
+
+| 항목 | 내용 |
+|------|------|
+| Path Param | appId: string (App ID) |
+| 호출 시점 | 앱 선택 완료 후 자동 호출 |
+
+**Response 200**
+```json
+{
+  "data": [
+    {
+      "id": "agency_1",
+      "name": "Digital Marketing Agency",
+      "userGroupId": 101
+    },
+    {
+      "id": "agency_2",
+      "name": "Performance Partners",
+      "userGroupId": 102
+    }
+  ]
+}
+```
+
+**Response 200** -- 대행사 없음
+```json
+{
+  "data": []
+}
+```
+
+---
+
+#### 대행사 권한 조회
+
+```
+GET /api/agencies/{agencyId}/permission
+```
+
+| 항목 | 내용 |
+|------|------|
+| Path Param | agencyId: string (대행사 ID) |
+| 호출 시점 | 대행사 드롭다운에서 대행사 선택 시 |
+
+**Response 200**
+```json
+{
+  "data": {
+    "integration": {
+      "integratedChannels": ["Google Ads", "Facebook Ads", "Kakao"],
+      "integratedChannelDataFilters": [],
+      "customChannels": ["Naver_Brand", "Kakao_Performance"],
+      "customChannelDataFilters": [
+        {
+          "name": "Naver_Brand",
+          "filter": {
+            "type": "startswith",
+            "values": ["naver_brand_", "naver_br_"],
+            "field": "campaign"
+          }
+        }
+      ],
+      "unattributedChannel": false,
+      "unattributedFilter": null
+    },
+    "dataRestriction": {
+      "eventCategories": ["purchase", "signup", "view_item"]
+    }
+  }
+}
+```
+
+**Response 404** -- 권한 정보 없음
+```json
+{
+  "error": {
+    "code": "PERMISSION_NOT_FOUND",
+    "message": "Permission not found for this agency"
+  }
+}
+```
+
+---
+
+#### 권한 업데이트
+
+```
+PUT /api/agencies/{agencyId}/permission
+```
+
+| 항목 | 내용 |
+|------|------|
+| Path Param | agencyId: string (대행사 ID) |
+| 호출 시점 | Apply 확인 Dialog에서 "적용" 버튼 클릭 시 |
+
+**Request Body**
+```json
+{
+  "integration": {
+    "integratedChannels": ["Google Ads", "Facebook Ads", "Kakao"],
+    "integratedChannelDataFilters": [],
+    "customChannels": ["Naver_Brand", "Kakao_Performance", "New_Channel"],
+    "customChannelDataFilters": [
+      {
+        "name": "Naver_Brand",
+        "filter": {
+          "type": "startswith",
+          "values": ["naver_brand_", "naver_br_"],
+          "field": "campaign"
+        }
+      },
+      {
+        "name": "Kakao_Performance",
+        "filter": {
+          "type": "is",
+          "values": ["kakao_main_campaign_2024", "kakao_retargeting_q1"],
+          "field": "campaign"
+        }
+      }
+    ],
+    "unattributedChannel": false,
+    "unattributedFilter": null
+  },
+  "dataRestriction": {
+    "eventCategories": ["purchase", "signup", "view_item"]
+  }
+}
+```
+
+**Response 200** -- 업데이트 성공
+```json
+{
+  "data": {
+    "integration": {
+      "integratedChannels": ["Google Ads", "Facebook Ads", "Kakao"],
+      "integratedChannelDataFilters": [],
+      "customChannels": ["Naver_Brand", "Kakao_Performance", "New_Channel"],
+      "customChannelDataFilters": [...],
+      "unattributedChannel": false,
+      "unattributedFilter": null
+    },
+    "dataRestriction": {
+      "eventCategories": ["purchase", "signup", "view_item"]
+    }
+  }
+}
+```
+
+**Response 400** -- 유효성 에러
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid permission data",
+    "details": [
+      { "field": "customChannels", "message": "Duplicate channel name: Naver_Brand" }
+    ]
+  }
+}
+```
+
+**Response 404** -- 대행사 없음
+```json
+{
+  "error": {
+    "code": "AGENCY_NOT_FOUND",
+    "message": "Agency not found"
+  }
+}
+```
+
+---
+
+### API 에러 공통 처리
+
+| HTTP 상태 | 클라이언트 처리 |
+|-----------|----------------|
+| 400 | 에러 메시지 Toast 표시. details 배열이 있으면 첫 번째 항목 메시지 사용 |
+| 404 (App) | "해당 App ID를 찾을 수 없습니다." Alert 표시 |
+| 404 (Agency) | "대행사를 찾을 수 없습니다." Toast 표시 |
+| 404 (Permission) | "권한 정보를 찾을 수 없습니다." Toast 표시 |
+| 500 | "서버 오류가 발생했습니다. 관리자에게 문의해주세요." Toast 표시 |
+| Network Error | "서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요." Toast 표시 |
+
+### 현재 Mock vs 실제 API 전환
+
+| 기능 | 현재 Mock | 실제 API 엔드포인트 (예상) |
+|------|-----------|---------------------------|
+| App ID로 검색 | mockApps.find() | GET /api/apps?id={appId} |
+| App Name으로 검색 | mockApps.filter() | GET /api/apps?name={query} |
+| 대행사 목록 조회 | mockAgencies[appId] | GET /api/apps/{appId}/agencies |
+| 대행사 권한 조회 | mockPermissions[agencyId] | GET /api/agencies/{agencyId}/permission |
+| 권한 업데이트 | 90% 성공 Mock | PUT /api/agencies/{agencyId}/permission |
+
+---
+
+## 8. 디자인/개발 체크리스트
+
+### 디자이너 체크리스트
+
+- [ ] 검색 타입 Select 스타일
+- [ ] 검색 결과 목록 hover/selected 상태
+- [ ] 선택된 앱 정보 카드 스타일
+- [ ] 대행사 Select 드롭다운 스타일 (2줄 - 이름/ID)
+- [ ] 빈 상태 일러스트 (채널 없음, 필터 없음, 대행사 없음)
+- [ ] 필터 타입 배지 색상 (시작: default, 끝: secondary, 일치/불일치: outline)
+- [ ] 필터 값 배지 스타일
+- [ ] Sticky Action Buttons 스타일
+- [ ] Dialog 스타일 (채널 추가, 필터 추가, 삭제 확인, Apply 확인)
+- [ ] JSON 뷰어 스타일 (mono 폰트, ScrollArea)
+- [ ] 에러 Alert 스타일
+- [ ] Toast 알림 스타일
+- [ ] 버튼 로딩(스피너) 상태
+
+### 개발자 체크리스트
+
+- [ ] 실제 App 검색 API 연동
+- [ ] 대행사 목록 API 연동
+- [ ] 권한 조회/업데이트 API 연동
+- [ ] API 에러 응답별 Toast 메시지 매핑
+- [ ] 네트워크 에러/타임아웃 처리
+- [ ] 버튼 로딩(스피너) 상태
+- [ ] 에러 바운더리 처리
+- [ ] 로딩 상태 스켈레톤 추가
+- [ ] 폼 dirty 상태 추적 (페이지 이탈 시 경고)
+- [ ] 키보드 접근성 (Tab 네비게이션, Enter 제출)
+- [ ] Tooltip 접근성 (TooltipProvider)
+- [ ] 낙관적 업데이트 고려
+- [ ] 재시도 로직 (저장 실패 시)
+- [ ] 권한 변경 이력 로깅 (선택 사항)

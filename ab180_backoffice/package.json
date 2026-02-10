@@ -1,0 +1,15 @@
+{
+  "name": "ab180-backoffice",
+  "private": true,
+  "version": "1.0.0",
+  "description": "AB180 Internal Backoffice Tools Monorepo",
+  "scripts": {
+    "dev:calculated-metric": "npm run dev --prefix packages/calculated-metric-backoffice",
+    "dev:custom-channel": "npm run dev --prefix packages/custom-channel-permission-backoffice",
+    "dev:custom-dedup": "npm run dev --prefix packages/custom-deduplication-backoffice",
+    "dev:event-usage": "npm run dev --prefix packages/event-usage-report",
+    "dev:reactivated": "npm run dev --prefix packages/reactivated-attribution-redesign",
+    "build:all": "npm run build --prefix packages/calculated-metric-backoffice && npm run build --prefix packages/custom-channel-permission-backoffice && npm run build --prefix packages/custom-deduplication-backoffice && npm run build --prefix packages/event-usage-report && npm run build --prefix packages/reactivated-attribution-redesign",
+    "install:all": "npm install --prefix packages/calculated-metric-backoffice && npm install --prefix packages/custom-channel-permission-backoffice && npm install --prefix packages/custom-deduplication-backoffice && npm install --prefix packages/event-usage-report && npm install --prefix packages/reactivated-attribution-redesign"
+  }
+}

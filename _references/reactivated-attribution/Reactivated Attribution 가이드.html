@@ -1,0 +1,718 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Reactivated Attribution (inactivity Window 설정)</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="8364d1ca-1a45-4370-82d2-bf3970d7e550" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">🪃</span></div><h1 class="page-title" dir="auto">Reactivated Attribution (inactivity Window 설정)</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>생성자</th><td><span class="user"><img src="Reactivated%20Attribution%20(inactivity%20Window%20%EC%84%A4%EC%A0%95)/%25EC%259E%25AC%25EC%259B%2590.png" class="icon user-icon"/>Jaewon Kim</span></td></tr><tr class="property-row property-row-last_edited_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>최종 편집 일시</th><td><time>@2025년 4월 30일 오후 4:51</time></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="ltr"><figure class="block-color-yellow_background callout" style="white-space:pre-wrap;display:flex" id="2d43ce5e-b11a-4d1f-9e6e-d0716497e2f4"><div style="font-size:1.5em"><span class="icon">❓</span></div><div style="width:100%">사용 중 문제가 있으신가요?<br/><span style="border-bottom:0.05em solid">#all-backend</span>에 <strong>!worker-support</strong> 를 태그해서 질문해주세요!</div></figure></div><div style="display:contents" dir="auto"><h2 id="03a78ed1-5e2c-48e4-9e89-f5595842bc44" class="">📄 Description</h2></div><div style="display:contents" dir="auto"><hr id="3a66b7d2-0e84-437b-82bc-faf929ec58d0"/></div><div style="display:contents" dir="auto"><div style="display:contents" dir="auto"><div><div style="display:contents" dir="auto"><ul id="3c1b4168-325c-44bd-b8cc-d1204ca91da0" class="bulleted-list"><li style="list-style-type:disc">“Airbridge 대시보드 &gt; 앱 선택 &gt; Internal &gt; Worker Backoffice 탭”으로 이동해서 사용하세요<div style="display:contents" dir="auto"><ul id="cb6b9986-a0a6-4d67-87d7-fb778674b305" class="bulleted-list"><li style="list-style-type:circle">VPN 또는 사무실 IP로만 접근 가능합니다</li></ul></div><div style="display:contents" dir="auto"><ul id="0ff3ed9d-554f-4232-a213-37f9f4e054eb" class="bulleted-list"><li style="list-style-type:circle">기본 가이드: <a href="https://www.notion.so/How-to-use-the-Worker-Backoffice-51aec70a87b7476f9f4a71d383760616?pvs=21"><img class="icon" src="data:image/png;base64,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"/>워커 백오피스 사용 가이드 | How to use the Worker Backoffice</a> </li></ul></div></li></ul></div></div></div></div><div style="display:contents" dir="auto"><ul id="dd459c41-bf7b-49f5-854d-1b47de75e846" class="bulleted-list"><li style="list-style-type:disc"><a href="https://help.airbridge.io/ko/guides/reactivation-tracking">Reactivation Tracking 유저 가이드</a></li></ul></div><div style="display:contents" dir="auto"><p id="1d78ffe4-3c82-4edd-a18d-ad4cb274ada4" class="">
+</p></div><div style="display:contents" dir="auto"><h2 id="874c7254-6d11-4260-acee-7c5dc538f884" class="">📎 FAQ.</h2></div><div style="display:contents" dir="auto"><hr id="58859901-2a08-491b-8054-3bb37f6f06e0"/></div><div style="display:contents" dir="auto"><ul id="fa754dac-4d22-4808-9b92-4a610556c18d" class="bulleted-list"><li style="list-style-type:disc"><em>Q. Inactivity Window란 무엇인가요?</em><div style="display:contents" dir="auto"><ul id="5cc2238c-be1a-4ff1-90ba-b81e631bb27d" class="bulleted-list"><li style="list-style-type:circle">유저가 앱을 사용하지 않은 기간을 의미합니다. Inactivity Window 이후에 앱을 사용하면 Reactivation으로 인식됩니다.</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="53551f73-9d8d-4139-8b9d-49120b3dd730" class="bulleted-list"><li style="list-style-type:disc"><em>Q. Lookback/Attribution Window를 설정하지 않으면 어떻게 되나요?</em><div style="display:contents" dir="auto"><ul id="75450fc4-007b-4a7d-9520-26b79cc7e9bb" class="bulleted-list"><li style="list-style-type:circle">기본값으로 설정됩니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="cafcc702-e44b-4d6f-9f70-19fb13fb703d" class="bulleted-list"><li style="list-style-type:circle">Lookback Window 기본 값:<div style="display:contents" dir="auto"><ul id="f5f55e68-d69a-45dd-9700-3209cb0c0806" class="bulleted-list"><li style="list-style-type:square">Click - Device Matching: 7일</li></ul></div><div style="display:contents" dir="auto"><ul id="1ce54d59-e4c6-4179-8b58-269e709157cd" class="bulleted-list"><li style="list-style-type:square">Click - Probabilistic Modeling Matching: 1일</li></ul></div><div style="display:contents" dir="auto"><ul id="db79e575-ce23-4a28-81c5-250b35065ada" class="bulleted-list"><li style="list-style-type:square">View - Device Matching: 1일</li></ul></div><div style="display:contents" dir="auto"><ul id="0fcc16d7-b1a1-4d73-892d-74d803ddd787" class="bulleted-list"><li style="list-style-type:square">View - Probabilistic Modeling Matching: 6시간</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="7d0d4a14-3c45-4595-b794-9edd9f77040d" class="bulleted-list"><li style="list-style-type:circle">Attribution Window 기본 값: 7일</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="bb24c6c7-2f6c-4435-b11e-5c4583e14b4f" class="bulleted-list"><li style="list-style-type:disc"><em>Q. Lookback/Attribution Window를 설정하고 Inactivity Window를 설정하지 않으면 어떻게 되나요?</em><div style="display:contents" dir="auto"><ul id="7d044ffb-15d4-4ce4-bd08-20f0c4ade442" class="bulleted-list"><li style="list-style-type:circle">아무것도 되지 않습니다. Inactivity Window를 설정해야 Reactivation Tracking이 됩니다.</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><p id="715c631d-b506-4d23-a0af-9f5caa1d8b41" class="">
+</p></div><div style="display:contents" dir="auto"><h2 id="5fb65ea4-eeff-45c5-86a3-57a7804f7930" class="">🤗 가이드</h2></div><div style="display:contents" dir="auto"><hr id="9d5f2572-ca3f-4e1a-8d17-bcb3541097c4"/></div><div style="display:contents" dir="ltr"><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="d342c8eb-7664-4521-82c2-de35f933be4a"><div style="font-size:1.5em"><span class="icon">❗</span></div><div style="width:100%">규칙 적용이 완료되면 Reactivated 관련 메트릭은 리포트에 자동으로 노출됩니다.</div></figure></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">App을 선택해주세요</summary><div class="indented"><div style="display:contents" dir="ltr"><figure id="ba85e1ec-b5c8-4e14-aa16-8391fe4ef263" class="image"><a href="Reactivated%20Attribution%20(inactivity%20Window%20%EC%84%A4%EC%A0%95)/Untitled.png"><img style="width:424.96875px" src="Reactivated%20Attribution%20(inactivity%20Window%20%EC%84%A4%EC%A0%95)/Untitled.png"/></a></figure></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">Inactivity Window를 설정해주세요</summary><div class="indented"><div style="display:contents" dir="ltr"><figure id="51fc5b58-b912-47f7-9b82-ba97a7ee1904" class="image"><a href="Reactivated%20Attribution%20(inactivity%20Window%20%EC%84%A4%EC%A0%95)/Untitled%201.png"><img style="width:611.984375px" src="Reactivated%20Attribution%20(inactivity%20Window%20%EC%84%A4%EC%A0%95)/Untitled%201.png"/></a></figure></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">세팅을 비활성화 하려면 삭제 버튼을 눌러주세요</summary><div class="indented"><div style="display:contents" dir="ltr"><figure id="9ad97b8d-0434-4988-b25a-ab234265e2b4" class="image"><a href="Reactivated%20Attribution%20(inactivity%20Window%20%EC%84%A4%EC%A0%95)/Untitled%202.png"><img style="width:679.9921875px" src="Reactivated%20Attribution%20(inactivity%20Window%20%EC%84%A4%EC%A0%95)/Untitled%202.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="ecd5ea30-acff-41f0-ae65-a140517ea674" class="">
+</p></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">(Optional) Lookback Window를 설정해주세요</summary><div class="indented"><div style="display:contents" dir="auto"><ul id="1e5a69a8-2507-8020-9104-c474bafed21b" class="bulleted-list"><li style="list-style-type:disc">현재 세팅: <code>없음</code> 으로 표시된다면, 기본값이 적용되고 있다는 뜻입니다.</li></ul></div><div style="display:contents" dir="auto"><ul id="76704660-bfc1-4b68-be06-766ce1975522" class="bulleted-list"><li style="list-style-type:disc">추가 방법<div style="display:contents" dir="ltr"><figure id="dae0ccc1-09cf-4497-8dac-466690962a44" class="image"><a href="Reactivated%20Attribution%20(inactivity%20Window%20%EC%84%A4%EC%A0%95)/Untitled%203.png"><img style="width:651.9791870117188px" src="Reactivated%20Attribution%20(inactivity%20Window%20%EC%84%A4%EC%A0%95)/Untitled%203.png"/></a></figure></div></li></ul></div><div style="display:contents" dir="auto"><ul id="a5d70e79-0c37-4e7a-962c-c2093f8f46d6" class="bulleted-list"><li style="list-style-type:disc">삭제 방법<div style="display:contents" dir="ltr"><figure id="ecb811be-2fd2-486a-b3bb-204b6128cd1b" class="image"><a href="Reactivated%20Attribution%20(inactivity%20Window%20%EC%84%A4%EC%A0%95)/Untitled%204.png"><img style="width:651.9375px" src="Reactivated%20Attribution%20(inactivity%20Window%20%EC%84%A4%EC%A0%95)/Untitled%204.png"/></a></figure></div></li></ul></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">(Optional) Attribution Window를 설정해주세요</summary><div class="indented"><div style="display:contents" dir="auto"><ul id="41175845-5043-4ae9-a643-3e8f1d6bc107" class="bulleted-list"><li style="list-style-type:disc">Lookback Window 설정 방법과 동일합니다</li></ul></div><div style="display:contents" dir="auto"><p id="7c18a54b-7bed-4a23-a41a-8040720ee494" class="">
+</p></div></div></details></div><div style="display:contents" dir="auto"><p id="1e5a69a8-2507-80fb-bdb0-d42b8a4f5fd0" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

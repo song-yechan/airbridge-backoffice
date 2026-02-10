@@ -55,7 +55,7 @@ export function ExpressionEditor({ value, onChange, onValidationChange, hasError
           value={value}
           onChange={(e) => handleChange(e.target.value)}
         />
-        <div className="rounded-md bg-muted p-3 text-xs overflow-y-auto max-h-[240px]">
+        <div className="rounded-md bg-muted p-3 text-xs overflow-y-auto max-h-[320px]">
           <p className="font-medium text-sm mb-2">Expression 작성 가이드</p>
           <table className="w-full text-muted-foreground">
             <thead>
@@ -110,6 +110,22 @@ export function ExpressionEditor({ value, onChange, onValidationChange, hasError
         </div>
       </div>
 
+      <div className="flex items-center gap-3">
+        <Button variant="outline" onClick={handleValidate}>
+          <ShieldCheck className="h-4 w-4 mr-1" />
+          Expression 검증
+        </Button>
+        {validationResult !== null && (
+          <span className={`flex items-center gap-1 text-sm ${validationResult === "valid" ? "text-green-600" : "text-destructive"}`}>
+            {validationResult === "valid" ? (
+              <><Check className="h-4 w-4" /> 유효한 Expression입니다</>
+            ) : (
+              <><X className="h-4 w-4" /> {validationResult}</>
+            )}
+          </span>
+        )}
+      </div>
+
       <div>
         <p className="text-xs font-medium text-muted-foreground mb-1">템플릿</p>
         <div className="flex flex-wrap gap-1">
@@ -127,22 +143,6 @@ export function ExpressionEditor({ value, onChange, onValidationChange, hasError
             </Button>
           ))}
         </div>
-      </div>
-
-      <div className="flex items-center gap-3 pt-1">
-        <Button variant="outline" onClick={handleValidate}>
-          <ShieldCheck className="h-4 w-4 mr-1" />
-          Expression 검증
-        </Button>
-        {validationResult !== null && (
-          <span className={`flex items-center gap-1 text-sm ${validationResult === "valid" ? "text-green-600" : "text-destructive"}`}>
-            {validationResult === "valid" ? (
-              <><Check className="h-4 w-4" /> 유효한 Expression입니다</>
-            ) : (
-              <><X className="h-4 w-4" /> {validationResult}</>
-            )}
-          </span>
-        )}
       </div>
     </div>
   );

@@ -8,9 +8,10 @@ interface ExpressionEditorProps {
   value: string;
   onChange: (v: string) => void;
   onValidationChange?: (isValid: boolean) => void;
+  hasError?: boolean;
 }
 
-export function ExpressionEditor({ value, onChange, onValidationChange }: ExpressionEditorProps) {
+export function ExpressionEditor({ value, onChange, onValidationChange, hasError }: ExpressionEditorProps) {
   const [validationResult, setValidationResult] = useState<string | null | "valid">(null);
 
   const handleValidate = () => {
@@ -39,7 +40,9 @@ export function ExpressionEditor({ value, onChange, onValidationChange }: Expres
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium">Expression</label>
+        <label className={`text-sm font-medium ${hasError ? "text-destructive" : ""}`}>
+          Expression {hasError && <span className="font-normal">— 유효한 Expression을 입력해주세요</span>}
+        </label>
         <Button variant="ghost" size="sm" onClick={handleFormat}>
           Format
         </Button>
@@ -47,7 +50,7 @@ export function ExpressionEditor({ value, onChange, onValidationChange }: Expres
 
       <div className="grid grid-cols-[1fr_1fr] gap-4">
         <textarea
-          className="min-h-[200px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm font-mono shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-y"
+          className={`min-h-[200px] w-full rounded-md border bg-transparent px-3 py-2 text-sm font-mono shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-y ${hasError ? "border-destructive" : "border-input"}`}
           placeholder='{\n  "type": "arithmetic",\n  "fn": "/",\n  "fields": [...]\n}'
           value={value}
           onChange={(e) => handleChange(e.target.value)}

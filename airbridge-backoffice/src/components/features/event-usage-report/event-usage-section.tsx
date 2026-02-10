@@ -1,10 +1,10 @@
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { EventChipsInput } from "./event-chips-input";
 import { EventUsageResult } from "./event-usage-result";
+import { DateRangePicker } from "./date-range-picker";
 import type { EventChip, DateRange } from "@/types";
 
 interface EventUsageSectionProps {
@@ -48,24 +48,8 @@ export function EventUsageSection({
           {/* Date Range */}
           <div className="flex gap-3 items-end flex-wrap">
             <div className="flex flex-col gap-1.5">
-              <Label className="text-sm font-medium">
-                Date <span className="font-normal text-muted-foreground">(최대 31일)</span>
-              </Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  type="date"
-                  value={dateRange.from}
-                  onChange={(e) => onDateRangeChange({ ...dateRange, from: e.target.value })}
-                  className="w-[160px] font-mono text-sm"
-                />
-                <span className="text-muted-foreground">–</span>
-                <Input
-                  type="date"
-                  value={dateRange.to}
-                  onChange={(e) => onDateRangeChange({ ...dateRange, to: e.target.value })}
-                  className="w-[160px] font-mono text-sm"
-                />
-              </div>
+              <Label className="text-sm font-medium">Date</Label>
+              <DateRangePicker value={dateRange} onChange={onDateRangeChange} />
             </div>
             <Button onClick={onRunQuery} disabled={isQuerying}>
               {isQuerying ? (

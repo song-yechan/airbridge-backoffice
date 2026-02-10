@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ExpressionEditor } from "./expression-editor";
-import { validateExpression } from "@/data/calculated-metrics-mock";
 import { toast } from "sonner";
 
 interface MetricCreateFormProps {
@@ -35,12 +34,18 @@ export function MetricCreateForm({
   onSubmit,
 }: MetricCreateFormProps) {
   const [errors, setErrors] = useState<FieldErrors>({ key: false, displayName: false, expression: false });
+  const [isExpressionValidated, setIsExpressionValidated] = useState(false);
+
+  const handleExpressionValidation = (isValid: boolean) => {
+    setIsExpressionValidated(isValid);
+    if (isValid && errors.expression) setErrors((prev) => ({ ...prev, expression: false }));
+  };
 
   const handleSubmit = () => {
     const newErrors: FieldErrors = {
       key: keyValue.trim() === "",
       displayName: displayName.trim() === "",
-      expression: validateExpression(expression) !== null,
+      expression: !isExpressionValidated,
     };
     setErrors(newErrors);
 
@@ -53,12 +58,13 @@ export function MetricCreateForm({
       return;
     }
     if (newErrors.expression) {
-      toast.error("Expression이 유효하지 않습니다. 검증을 통과해주세요.");
+      toast.error("Expression 검증 버튼을 클릭하여 검증을 통과해주세요.");
       return;
     }
 
     onSubmit();
     setErrors({ key: false, displayName: false, expression: false });
+    setIsExpressionValidated(false);
   };
 
   return (
@@ -110,8 +116,10 @@ export function MetricCreateForm({
           value={expression}
           onChange={(v) => {
             onExpressionChange(v);
+            setIsExpressionValidated(false);
             if (errors.expression) setErrors((prev) => ({ ...prev, expression: false }));
           }}
+          onValidationChange={handleExpressionValidation}
           hasError={errors.expression}
         />
 

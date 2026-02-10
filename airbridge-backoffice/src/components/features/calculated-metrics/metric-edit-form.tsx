@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -34,11 +34,18 @@ export function MetricEditForm({
   onDelete,
 }: MetricEditFormProps) {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isExpressionValid, setIsExpressionValid] = useState(true);
+
+  useEffect(() => {
+    setIsExpressionValid(true);
+  }, [metric.id]);
 
   const handleDelete = () => {
     onDelete();
     setIsDeleteOpen(false);
   };
+
+  const isEditEnabled = displayName.trim() !== "" && isExpressionValid;
 
   return (
     <Card>
@@ -64,10 +71,14 @@ export function MetricEditForm({
           />
         </div>
 
-        <ExpressionEditor value={expression} onChange={onExpressionChange} />
+        <ExpressionEditor
+          value={expression}
+          onChange={onExpressionChange}
+          onValidationChange={setIsExpressionValid}
+        />
 
         <div className="grid grid-cols-2 gap-4">
-          <Button onClick={onEdit}>Edit</Button>
+          <Button onClick={onEdit} disabled={!isEditEnabled}>Edit</Button>
           <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
             <DialogTrigger asChild>
               <Button variant="destructive">Delete</Button>

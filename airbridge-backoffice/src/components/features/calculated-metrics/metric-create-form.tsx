@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,10 @@ export function MetricCreateForm({
   onExpressionChange,
   onSubmit,
 }: MetricCreateFormProps) {
+  const [isExpressionValid, setIsExpressionValid] = useState(false);
+
+  const isSubmitEnabled = keyValue.trim() !== "" && displayName.trim() !== "" && isExpressionValid;
+
   return (
     <Card>
       <CardHeader>
@@ -42,7 +47,7 @@ export function MetricCreateForm({
           <label className="text-sm font-medium">Key</label>
           <Input
             className="mt-1"
-            placeholder="영어 소문자, 숫자, 언더스코어만 허용"
+            placeholder="영어 소문자, 숫자, 언더스코어만 허용 (예: cost_per_install)"
             value={keyValue}
             onChange={(e) => onKeyChange(e.target.value)}
           />
@@ -54,19 +59,28 @@ export function MetricCreateForm({
           <label className="text-sm font-medium">Display Name</label>
           <Input
             className="mt-1"
-            placeholder="리포트에서 표시되는 이름"
+            placeholder="리포트에서 표시되는 이름 (예: CPI)"
             value={displayName}
             onChange={(e) => onDisplayNameChange(e.target.value)}
           />
         </div>
 
-        <ExpressionEditor value={expression} onChange={onExpressionChange} />
+        <ExpressionEditor
+          value={expression}
+          onChange={onExpressionChange}
+          onValidationChange={setIsExpressionValid}
+        />
 
         <Separator />
 
-        <Button className="w-full" onClick={onSubmit}>
+        <Button className="w-full" onClick={onSubmit} disabled={!isSubmitEnabled}>
           Submit
         </Button>
+        {!isSubmitEnabled && (
+          <p className="text-xs text-muted-foreground text-center">
+            Key, Display Name을 입력하고 Expression 검증을 통과해야 제출할 수 있습니다.
+          </p>
+        )}
       </CardContent>
     </Card>
   );

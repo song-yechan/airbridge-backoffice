@@ -1,11 +1,19 @@
-import { MessageCircle, AlertTriangle } from "lucide-react";
+import { useState } from "react";
+import { MessageCircle, AlertTriangle, ChevronDown, ChevronUp } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 const SLACK_URL = "https://teamab180.slack.com/archives/C9B1D5N7N";
 
 export function GuideSection() {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div className="space-y-4">
       {/* Slack 문의 */}
@@ -26,17 +34,28 @@ export function GuideSection() {
       </Alert>
 
       {/* 운영 가이드 */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4" />
-            운영 가이드
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Calculated Metric 생성·수정·삭제 전 반드시 확인해주세요.
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4 text-sm">
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <Card>
+          <CollapsibleTrigger asChild>
+            <CardHeader className="pb-3 cursor-pointer hover:bg-muted/50 transition-colors">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4" />
+                  운영 가이드
+                </CardTitle>
+                {isOpen ? (
+                  <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                )}
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Calculated Metric 생성·수정·삭제 전 반드시 확인해주세요.
+              </p>
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="space-y-4 text-sm">
           {/* 생성 */}
           <div className="space-y-2">
             <Badge variant="outline">생성</Badge>
@@ -105,8 +124,10 @@ export function GuideSection() {
               </li>
             </ul>
           </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
     </div>
   );
 }

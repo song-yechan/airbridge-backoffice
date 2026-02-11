@@ -40,6 +40,7 @@ export function EventUsageSection({
           특정 이벤트가 리포트에서 조회된 횟수(Report Usage)와
           외부 매체로 발송된 횟수(Postback)를 확인할 수 있습니다.
           아래에서 조회 기간을 설정하고 이벤트를 추가한 뒤 Run Query를 눌러주세요.
+          조회 기간은 최대 31일까지 선택 가능합니다.
         </p>
       </div>
 

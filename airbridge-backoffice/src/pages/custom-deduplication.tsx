@@ -1,5 +1,6 @@
 import { PageHeader } from "@/components/layout/page-header";
 import { Separator } from "@/components/ui/separator";
+import { DedupGuideSection } from "@/components/features/custom-deduplication/dedup-guide-section";
 import { AppSearchSection } from "@/components/features/custom-deduplication/app-search-section";
 import { CurrentSettingsTable } from "@/components/features/custom-deduplication/current-settings-table";
 import { ConditionSelector } from "@/components/features/custom-deduplication/condition-selector";
@@ -28,6 +29,8 @@ export function CustomDeduplicationPage() {
         title="Custom Deduplication"
         description="같은 유저의 동일 이벤트가 짧은 시간 내에 여러 번 발생할 때, 중복으로 간주하여 한 번만 집계되도록 설정합니다. Platform과 이벤트 종류별로 중복 제거 기간(Window)을 지정할 수 있습니다."
       />
+
+      <DedupGuideSection />
 
       <div className="space-y-6">
         <AppSearchSection

@@ -73,6 +73,7 @@ export function EventUsageResult({
               이 이벤트({eventId})가 외부 광고 매체(Facebook, Google, Appier 등)로
               발송된 포스트백 횟수입니다. 특정 매체의 수치가 0이면 포스트백 설정이나
               발송에 문제가 있을 수 있습니다.
+              {" "}Google Ads(google.adwords)는 모든 이벤트를 전송하므로 분석 결과에서 제외됩니다.
             </p>
             <ChartContainer
               data={POSTBACK_DATA}

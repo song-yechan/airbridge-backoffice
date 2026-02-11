@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/layout/page-header";
+import { ReactivatedGuideSection } from "@/components/features/reactivated-attribution/reactivated-guide-section";
 import { AppSearchSection } from "@/components/features/custom-deduplication/app-search-section";
 import { InactivityWindow } from "@/components/features/reactivated-attribution/inactivity-window";
 import { LookbackWindow } from "@/components/features/reactivated-attribution/lookback-window";
@@ -28,6 +29,8 @@ export function ReactivatedAttributionPage() {
         title="Reactivated Attribution"
         description="비활성 유저 재활성화 어트리뷰션 Window 설정"
       />
+
+      <ReactivatedGuideSection />
 
       <div className="space-y-6">
         <AppSearchSection

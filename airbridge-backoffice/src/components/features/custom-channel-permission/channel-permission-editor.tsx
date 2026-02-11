@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Plus } from "lucide-react";
+import { Plus, AlertTriangle } from "lucide-react";
 import type { ChannelPermissionEntry, CampaignFilterType } from "@/types";
 import { ChannelCard } from "./channel-card";
 
@@ -88,6 +89,13 @@ export function ChannelPermissionEditor({
         </Button>
 
         <Separator />
+
+        <Alert>
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            <strong>Apply 버튼을 클릭하기 전까지</strong> 변경 사항이 반영되지 않습니다.
+          </AlertDescription>
+        </Alert>
 
         <Button className="w-full" onClick={onApply} disabled={!isDirty}>
           Apply
